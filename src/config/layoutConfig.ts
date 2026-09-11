@@ -1,0 +1,1 @@
+export const LAYOUT_MODE: 'sidebar' | 'topbar' = 'topbar';
