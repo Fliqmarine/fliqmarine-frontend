@@ -31,11 +31,11 @@ export const menuConfig: MenuItem[] = [
   {
     label: 'Dashboard',
     path: '/dashboard',
-    icon: DashboardIcon,
+    // icon: DashboardIcon,
   },
   {
     label: 'Stocks',
-    icon: WarehouseIcon,
+    // icon: WarehouseIcon,
     children: [
       { label: 'Stock List', path: '/stocks/stock-list' , icon: WarehouseIcon},
       { label: 'Stock FollowUp', path: '/stocks/followup' , icon: AddAlarmIcon},
@@ -45,14 +45,14 @@ export const menuConfig: MenuItem[] = [
   },
   {
     label: 'Manifest',
-    icon: LocalShippingIcon,
+    // icon: LocalShippingIcon,
     children: [
       { label: 'Manifest List', path: '/manifest/list' , icon: LocalShippingIcon},
     ],
   },
   {
     label: 'Prealerts',
-    icon: NotificationsActiveIcon,
+    // icon: NotificationsActiveIcon,
     children: [
       { label: 'All Stages', path: '/prealerts/all-stages' , icon: NotificationsActiveIcon},
       { label: 'Stage 1', path: '/prealerts/stage-1' , icon: LooksOneIcon},
@@ -63,7 +63,7 @@ export const menuConfig: MenuItem[] = [
   },
   {
     label: 'Finance',
-    icon: AccountBalanceIcon,
+    // icon: AccountBalanceIcon,
     children: [
       { label: 'Sale Invoices', path: '/finance/sale-invoices' , icon: AccountBalanceIcon},
       { label: 'Vendor Invoices', path: '/finance/vendor-invoices' , icon: AccountBalanceIcon},
@@ -77,7 +77,7 @@ export const menuConfig: MenuItem[] = [
   },
   {
     label: 'Report',
-    icon: ImportContactsSharpIcon,
+    // icon: ImportContactsSharpIcon,
     children: [
       { label: 'AR Report', path: '/finance/ar-report' , icon: ImportContactsSharpIcon},
       { label: 'AP Report', path: '/finance/ap-report' , icon: ImportContactsSharpIcon},
@@ -87,7 +87,7 @@ export const menuConfig: MenuItem[] = [
   },
   {
     label: 'Master',
-    icon: Inventory2Icon,
+    // icon: Inventory2Icon,
     children: [
       { label: 'Users', path: '/users' , icon: PeopleIcon},
       { label: 'Locations', path: '/master/locations' , icon: LocalShippingIcon},

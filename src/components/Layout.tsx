@@ -21,7 +21,7 @@ export default function Layout() {
         <Topbar />
         {/* Spacer to push content below the fixed Topbar */}
         <Toolbar />
-        <Box sx={{ p: 3 }}>
+        <Box>
           <Outlet />
         </Box>
       </Box>
