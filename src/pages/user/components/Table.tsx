@@ -72,7 +72,7 @@ export default function UserTable({
     >
       <TableContainer>
         <Table size="small">
-          <TableHead sx={{ backgroundColor: '#0b1c39'}}>
+          <TableHead>
             <TableRow>
               <TableCell padding="checkbox" sx={{ py: 0.5, px: 1 }}>
                 <Checkbox

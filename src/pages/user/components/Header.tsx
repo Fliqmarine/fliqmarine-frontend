@@ -49,7 +49,6 @@ export default function Header({ onCreateUser }: HeaderProps) {
           fontSize: 13,
           borderRadius: 1.5,
           px: 1.5,
-          backgroundColor: '#0b1c39',
           py: 0.5,
         }}
       >

@@ -137,12 +137,11 @@ export default function UserFormDrawer({
             py: 2,
             borderTop: '1px solid',
             borderColor: 'divider',
-            backgroundColor: '#f1f3f8',
           }}
         >
           <Button
             onClick={handleClose}
-            sx={{ textTransform: 'none', fontWeight: 600 , color: "#2d3e7d" }}
+            sx={{ textTransform: 'none', fontWeight: 600 }}
           >
             Cancel
           </Button>
@@ -151,8 +150,7 @@ export default function UserFormDrawer({
             variant="contained"
             onClick={handleSubmit}
             disabled={!values.name || !values.email}
-            sx={{ textTransform: 'none', fontWeight: 600,
-            backgroundColor: '#2d3e7d', }}
+            sx={{ textTransform: 'none', fontWeight: 600 }}
           >
             Create
           </Button>

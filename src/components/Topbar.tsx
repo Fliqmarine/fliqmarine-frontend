@@ -29,6 +29,7 @@ import { menuConfig } from '../config/menuConfig';
 import type { MenuItem } from '../config/menuConfig';
 import { LAYOUT_MODE } from '../config/layoutConfig';
 import { SIDEBAR_WIDTH } from './Sidebar';
+import ThemeToggleButton from './ThemeToggleButton';
 
 // Keep in sync with Sidebar.tsx
 const ACCENT = '#5B7CFA';
@@ -219,6 +220,7 @@ export default function Topbar() {
           </Menu>
 
           <Box sx={{ display: 'flex', alignItems: 'center', gap: { xs: 0.5, sm: 1 } }}>
+            <ThemeToggleButton />
             <Divider
               orientation="vertical"
               flexItem

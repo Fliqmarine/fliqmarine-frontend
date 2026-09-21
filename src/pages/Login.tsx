@@ -1,4 +1,6 @@
 import { useEffect, useState, type ChangeEvent, type FormEvent } from "react";
+import { ThemeProvider } from "@mui/material/styles";
+import { getTheme } from "../theme/theme"; // adjust path to match your project
 import { useNavigate } from "react-router-dom";
 import {
   Box,
@@ -203,6 +205,7 @@ function LogoMark({ animate }: { animate: boolean }) {
       <circle cx="8" cy="21" r="1.7" fill="none" stroke={COLORS.leaf} strokeWidth={1.4} />
       <circle cx="25" cy="10.5" r="2.2" fill={COLORS.leaf} />
     </Box>
+
   );
 }
 
@@ -265,6 +268,7 @@ export default function Login() {
 
   return (
     <>
+    <ThemeProvider theme={getTheme("light")}>
       <GlobalStyles styles={GLOBAL_STYLES} />
 
       <Box
@@ -669,6 +673,7 @@ export default function Login() {
           </Box>
         </Box>
       </Box>
+    </ThemeProvider>
     </>
   );
 }
