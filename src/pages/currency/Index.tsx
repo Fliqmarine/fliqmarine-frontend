@@ -3,41 +3,38 @@ import { Box, Button, Typography } from '@mui/material';
 import { useState } from 'react';
 import Header from './components/Header';
 import Filter from './components/Filter';
-import UserTable, { type User } from './components/Table';
+import CurrencyTable, { type Currency } from './components/Table';
 
-const users: User[] = [
-  { id: 1, name: 'John Smith', email: 'john.smith@example.com', role: 'Admin', status: 'Active' },
-  { id: 2, name: 'David Wilson', email: 'david.wilson@example.com', role: 'Manager', status: 'Active' },
-  { id: 3, name: 'Sarah Johnson', email: 'sarah.johnson@example.com', role: 'User', status: 'Active' },
-  { id: 4, name: 'Michael Brown', email: 'michael.brown@example.com', role: 'Manager', status: 'InActive' },
-  { id: 5, name: 'Emily Davis', email: 'emily.davis@example.com', role: 'User', status: 'Active' },
-  { id: 6, name: 'Daniel Miller', email: 'daniel.miller@example.com', role: 'User', status: 'Active' },
-  { id: 7, name: 'Sophia Anderson', email: 'sophia.anderson@example.com', role: 'Admin', status: 'Active' },
-  { id: 8, name: 'James Taylor', email: 'james.taylor@example.com', role: 'User', status: 'InActive' },
-  { id: 9, name: 'Olivia Thomas', email: 'olivia.thomas@example.com', role: 'Manager', status: 'Active' },
-  { id: 10, name: 'William Moore', email: 'william.moore@example.com', role: 'User', status: 'Active' },
+const currencies: Currency[] = [
+  { id: 1, name: 'US Dollar', code: 'USD', rate: 1.0, status: 'Active' },
+  { id: 2, name: 'Euro', code: 'EUR', rate: 0.85, status: 'Active' },
+  { id: 3, name: 'Rupee', code: 'INR', rate: 74.5, status: 'InActive' },
+  { id: 4, name: 'Yen', code: 'JPY', rate: 110.0, status: 'InActive' },
+  { id: 5, name: 'British Pound', code: 'GBP', rate: 0.73, status: 'InActive' },
+  { id: 6, name: 'Rouble', code: 'RUB', rate: 90.0, status: 'InActive' },
+  { id: 7, name: 'Chinese Yuan', code: 'CNY', rate: 6.45, status: 'InActive' },
+  { id: 8, name: 'British Pound', code: 'GBP', rate: 0.73, status: 'InActive' },
+  { id: 9, name: 'British Pound', code: 'GBP', rate: 0.73, status: 'InActive' },
 ];
 
 export default function Index() {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [search, setSearch] = useState('');
-  const [role, setRole] = useState('');
   const [status, setStatus] = useState('');
   const [selected, setSelected] = useState<number[]>([]);
 
-  const filteredUsers = users.filter((user) => {
+  const filteredCurrencies = currencies.filter((currency) => {
     const matchesSearch =
-      user.name.toLowerCase().includes(search.toLowerCase()) ||
-      user.email.toLowerCase().includes(search.toLowerCase());
+      currency.name.toLowerCase().includes(search.toLowerCase()) ||
+      currency.code.toLowerCase().includes(search.toLowerCase());
 
-    const matchesRole = !role || user.role === role;
-    const matchesStatus = !status || user.status === status;
+    const matchesStatus = !status || currency.status === status;
 
-    return matchesSearch && matchesRole && matchesStatus;
+    return matchesSearch && matchesStatus;
   });
 
-  const paginatedUsers = filteredUsers.slice(
+  const paginatedCurrencies = filteredCurrencies.slice(
     page * rowsPerPage,
     page * rowsPerPage + rowsPerPage,
   );
@@ -62,7 +59,7 @@ export default function Index() {
   };
 
   const handleSelectAllOnPage = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const pageIds = paginatedUsers.map((user) => user.id);
+    const pageIds = paginatedCurrencies.map((currency) => currency.id);
 
     if (event.target.checked) {
       setSelected((prev) => Array.from(new Set([...prev, ...pageIds])));
@@ -84,14 +81,9 @@ export default function Index() {
       <Header />
       <Filter
         search={search}
-        role={role}
         status={status}
         onSearchChange={(value) => {
           setSearch(value);
-          setPage(0);
-        }}
-        onRoleChange={(value) => {
-          setRole(value);
           setPage(0);
         }}
         onStatusChange={(value) => {
@@ -100,7 +92,6 @@ export default function Index() {
         }}
         onReset={() => {
           setSearch('');
-          setRole('');
           setStatus('');
           setPage(0);
         }}
@@ -149,9 +140,9 @@ export default function Index() {
         </Box>
       )}
 
-      <UserTable
-        users={filteredUsers}
-        paginatedUsers={paginatedUsers}
+      <CurrencyTable
+        currencies={filteredCurrencies}
+        paginatedCurrencies={paginatedCurrencies}
         page={page}
         rowsPerPage={rowsPerPage}
         selected={selected}

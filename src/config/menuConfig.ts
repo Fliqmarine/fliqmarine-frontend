@@ -91,7 +91,7 @@ export const menuConfig: MenuItem[] = [
       { label: 'Users', path: '/master/users' , icon: PeopleIcon},
       { label: 'Hub Locations', path: '/master/hub-locations' , icon: LocalShippingIcon},
       { label: 'Vessels', path: '/master/vessels' , icon: DirectionsBoatIcon},
-      { label: 'Currency', path: '/master/currency' , icon: AttachMoneyIcon},
+      { label: 'Currency', path: '/master/currencies' , icon: AttachMoneyIcon},
       { label: 'Currency Rate', path: '/master/currency-rate' , icon: PaidIcon},
       { label: 'Airport Codes', path: '/master/airport-codes' , icon: LocalAirportIcon},
       { label: 'Bank', path: '/master/bank' , icon: AccountBalanceIcon},
