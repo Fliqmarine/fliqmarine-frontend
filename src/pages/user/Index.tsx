@@ -128,7 +128,7 @@ export default function Index() {
           <Box sx={{ display: 'flex', gap: 1 }}>
             <Button
               size="small"
-              variant="outlined"
+              variant="contained"
               startIcon={<DescriptionOutlined sx={{ fontSize: 16 }} />}
               onClick={handleExportExcel}
               sx={{ textTransform: 'none', fontSize: 12, fontWeight: 600 }}
@@ -138,7 +138,7 @@ export default function Index() {
 
             <Button
               size="small"
-              variant="outlined"
+              variant="contained"
               startIcon={<PictureAsPdfOutlined sx={{ fontSize: 16 }} />}
               onClick={handleExportPdf}
               sx={{ textTransform: 'none', fontSize: 12, fontWeight: 600 }}

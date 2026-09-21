@@ -15,13 +15,15 @@ import {
 } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
+import { useState } from 'react';
+import UserFormDrawer from './UserFormDrawer';
 
 export type User = {
   id: number;
   name: string;
   email: string;
   role: string;
-  status: 'Active' | 'Inactive';
+  status: 'Active' | 'InActive';
 };
 
 type UserTableProps = {
@@ -60,6 +62,19 @@ export default function UserTable({
   const someOnPageSelected =
     pageSelectedCount > 0 && pageSelectedCount < paginatedUsers.length;
 
+    const [drawerOpen, setDrawerOpen] = useState(false);
+    const [selectedUser, setSelectedUser] = useState<User | null>(null);
+
+    const handleEdit = (user: User) => {
+      setSelectedUser(user);
+      setDrawerOpen(true);
+    };
+
+    const handleClose = () => {
+      setDrawerOpen(false);
+      setSelectedUser(null);
+    };
+
   return (
     <Paper
       elevation={0}
@@ -70,38 +85,18 @@ export default function UserTable({
         overflow: 'hidden',
       }}
     >
-      <TableContainer>
-        <Table size="small">
+      <TableContainer component={Paper}>
+        <Table size="small" aria-label="a dense table">
           <TableHead>
             <TableRow>
               <TableCell padding="checkbox" sx={{ py: 0.5, px: 1 }}>
-                <Checkbox
-                  size="small"
-                  sx={{ color: 'white', '&.Mui-checked': { color: 'white' } }}
-                  checked={allOnPageSelected}
-                  indeterminate={someOnPageSelected}
-                  onChange={onSelectAllOnPage}
-                />
+                <Checkbox size="small" checked={allOnPageSelected} indeterminate={someOnPageSelected} onChange={onSelectAllOnPage}/>
               </TableCell>
-
-              <TableCell sx={{ ...cellSx, fontWeight: 700, fontSize: 12, color: 'white' }}>
-                Name
-              </TableCell>
-              <TableCell sx={{ ...cellSx, fontWeight: 700, fontSize: 12, color: 'white' }}>
-                Email
-              </TableCell>
-              <TableCell sx={{ ...cellSx, fontWeight: 700, fontSize: 12, color: 'white' }}>
-                Role
-              </TableCell>
-              <TableCell sx={{ ...cellSx, fontWeight: 700, fontSize: 12, color: 'white' }}>
-                Status
-              </TableCell>
-              <TableCell
-                align="right"
-                sx={{ ...cellSx, fontWeight: 700, fontSize: 12, color: 'white' }}
-              >
-                Action
-              </TableCell>
+              <TableCell sx={{ ...cellSx, fontWeight: 700, fontSize: 12 }}>Name</TableCell>
+              <TableCell sx={{ ...cellSx, fontWeight: 700, fontSize: 12 }}>Email</TableCell>
+              <TableCell sx={{ ...cellSx, fontWeight: 700, fontSize: 12 }}>Role</TableCell>
+              <TableCell sx={{ ...cellSx, fontWeight: 700, fontSize: 12 }}>Status</TableCell>
+              <TableCell align="right" sx={{ ...cellSx, fontWeight: 700, fontSize: 12 }}>Action</TableCell>
             </TableRow>
           </TableHead>
 
@@ -159,9 +154,13 @@ export default function UserTable({
                   </TableCell>
 
                     <TableCell align="right" sx={{ ...cellSx, fontWeight: 700, fontSize: 12 }}>
-                        <IconButton size="small" sx={{ '&:hover': { color: 'primary.main',},}}>
+                          <IconButton
+                            size="small"
+                            onClick={() => handleEdit(user)}
+                            sx={{ '&:hover': { color: 'primary.main' } }}
+                          >
                             <EditIcon fontSize="small" />
-                        </IconButton>
+                          </IconButton>
 
                         <IconButton size="small" sx={{ '&:hover': { color: 'error.main',},}}>
                             <DeleteIcon fontSize="small" />
@@ -174,6 +173,13 @@ export default function UserTable({
           </TableBody>
         </Table>
       </TableContainer>
+
+      <UserFormDrawer
+        open={drawerOpen}
+        onClose={handleClose}
+        onSubmit={handleEdit}
+        user={selectedUser} 
+      />
 
       <TablePagination
         component="div"

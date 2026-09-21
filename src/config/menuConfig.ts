@@ -1,4 +1,3 @@
-import DashboardIcon from '@mui/icons-material/Dashboard';
 import Inventory2Icon from '@mui/icons-material/Inventory2';
 import WarehouseIcon from '@mui/icons-material/Warehouse';
 import LocalShippingIcon from '@mui/icons-material/LocalShipping';
@@ -89,8 +88,8 @@ export const menuConfig: MenuItem[] = [
     label: 'Master',
     // icon: Inventory2Icon,
     children: [
-      { label: 'Users', path: '/users' , icon: PeopleIcon},
-      { label: 'Locations', path: '/master/locations' , icon: LocalShippingIcon},
+      { label: 'Users', path: '/master/users' , icon: PeopleIcon},
+      { label: 'Hub Locations', path: '/master/hub-locations' , icon: LocalShippingIcon},
       { label: 'Vessels', path: '/master/vessels' , icon: DirectionsBoatIcon},
       { label: 'Currency', path: '/master/currency' , icon: AttachMoneyIcon},
       { label: 'Currency Rate', path: '/master/currency-rate' , icon: PaidIcon},

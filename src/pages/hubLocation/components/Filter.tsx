@@ -16,11 +16,10 @@ import {
 
 type FilterProps = {
   search: string;
-  role: string;
-  status: string;
+  client: string;
+  clients: string[];
   onSearchChange: (value: string) => void;
-  onRoleChange: (value: string) => void;
-  onStatusChange: (value: string) => void;
+  onClientChange: (value: string) => void;
   onReset: () => void;
 };
 
@@ -32,11 +31,10 @@ const inputSx = {
 
 export default function Filter({
   search,
-  role,
-  status,
+  client,
+  clients,
   onSearchChange,
-  onRoleChange,
-  onStatusChange,
+  onClientChange,
   onReset,
 }: FilterProps) {
   return (
@@ -52,7 +50,7 @@ export default function Filter({
       {/* Mobile: full width on its own row. Desktop: fixed-ish width */}
       <TextField
         size="small"
-        placeholder="Search users..."
+        placeholder="Search hubs..."
         value={search}
         onChange={(event) => onSearchChange(event.target.value)}
         slotProps={{
@@ -71,7 +69,7 @@ export default function Filter({
         }}
       />
 
-      {/* Mobile: split the row evenly. Desktop: fixed min width */}
+      {/* Mobile: takes the rest of the row. Desktop: fixed min width */}
       <FormControl
         size="small"
         sx={{
@@ -80,48 +78,24 @@ export default function Filter({
           ...inputSx,
         }}
       >
-        <InputLabel>Role</InputLabel>
+        <InputLabel>Client</InputLabel>
 
         <Select
-          value={role}
-          label="Role"
-          onChange={(event) => onRoleChange(event.target.value)}
+          value={client}
+          label="Client"
+          onChange={(event) => onClientChange(event.target.value)}
           MenuProps={{
             slotProps: {
               list: { sx: { fontSize: 13 } },
             },
           }}
         >
-          <MenuItem value="" sx={{ fontSize: 13 }}>All Roles</MenuItem>
-          <MenuItem value="Admin" sx={{ fontSize: 13 }}>Admin</MenuItem>
-          <MenuItem value="Manager" sx={{ fontSize: 13 }}>Manager</MenuItem>
-          <MenuItem value="User" sx={{ fontSize: 13 }}>User</MenuItem>
-        </Select>
-      </FormControl>
-
-      <FormControl
-        size="small"
-        sx={{
-          flex: { xs: '1 1 0', sm: '0 0 auto' },
-          minWidth: { xs: 0, sm: 120 },
-          ...inputSx,
-        }}
-      >
-        <InputLabel>Status</InputLabel>
-
-        <Select
-          value={status}
-          label="Status"
-          onChange={(event) => onStatusChange(event.target.value)}
-          MenuProps={{
-            slotProps: {
-              list: { sx: { fontSize: 13 } },
-            },
-          }}
-        >
-          <MenuItem value="" sx={{ fontSize: 13 }}>All Status</MenuItem>
-          <MenuItem value="Active" sx={{ fontSize: 13 }}>Active</MenuItem>
-          <MenuItem value="InActive" sx={{ fontSize: 13 }}>InActive</MenuItem>
+          <MenuItem value="" sx={{ fontSize: 13 }}>All Clients</MenuItem>
+          {clients.map((name) => (
+            <MenuItem key={name} value={name} sx={{ fontSize: 13 }}>
+              {name}
+            </MenuItem>
+          ))}
         </Select>
       </FormControl>
 

@@ -13,6 +13,8 @@ import { useState } from 'react';
 export type UserFormValues = {
   name: string;
   email: string;
+  password: string;
+  confirmPassword: string;
   role: string;
   status: 'Active' | 'Inactive';
 };
@@ -26,6 +28,8 @@ type UserFormDrawerProps = {
 const initialValues: UserFormValues = {
   name: '',
   email: '',
+  password: '',
+  confirmPassword: '',
   role: 'User',
   status: 'Active',
 };
@@ -95,6 +99,24 @@ export default function UserFormDrawer({
             type="email"
             value={values.email}
             onChange={(e) => handleChange('email', e.target.value)}
+          />
+
+          <TextField
+            label="Password"
+            size="small"
+            fullWidth
+            type="password"
+            value={values.password}
+            onChange={(e) => handleChange('password', e.target.value)}
+          />
+
+          <TextField
+            label="Confirm Password"
+            size="small"
+            fullWidth
+            type="password"
+            value={values.confirmPassword}
+            onChange={(e) => handleChange('confirmPassword', e.target.value)}
           />
 
           <TextField
