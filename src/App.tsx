@@ -4,6 +4,7 @@ import { Dashboard } from './pages/dashboard/Index';
 import User from './pages/user/Index';
 import HubLocation from './pages/hubLocation/Index';
 import Currency from './pages/currency/Index';
+import TariffMaster from './pages/tariff/Index';
 import Layout from './components/Layout';
 
 function App() {
@@ -20,6 +21,7 @@ function App() {
           <Route path="/master/users" element={<User />} />
           <Route path="/master/hub-locations" element={<HubLocation />} />
           <Route path="/master/currencies" element={<Currency />} />
+          <Route path="/master/tariff-masters" element={<TariffMaster />} />
         </Route>
       </Routes>
     </BrowserRouter>

@@ -24,10 +24,10 @@ export const getTheme = (mode: PaletteMode): Theme =>
     palette: {
       mode,
       primary: {
-        main: '#1565C0',   // dark blue — your brand color
+        main: mode === 'dark' ? '#fbfbfb' : '#163058',
         light: '#5E92F3',
-        dark: '#003C8F',
-        contrastText: '#ffffff',
+        dark: mode === 'dark' ? '#90dcff' : '#050c18', // hover color for contained buttons
+        contrastText: mode === 'dark' ? '#00283e' : '#fcfdff',
       },
       secondary: {
         main: mode === 'dark' ? '#1b2a41' : '#0a1929',
