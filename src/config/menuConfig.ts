@@ -93,7 +93,7 @@ export const menuConfig: MenuItem[] = [
       { label: 'Vessels', path: '/master/vessels' , icon: DirectionsBoatIcon},
       { label: 'Currency', path: '/master/currencies' , icon: AttachMoneyIcon},
       { label: 'Airport Codes', path: '/master/airport-codes' , icon: LocalAirportIcon},
-      { label: 'Bank', path: '/master/bank' , icon: AccountBalanceIcon},
+      { label: 'Bank', path: '/master/banks' , icon: AccountBalanceIcon},
       { label: 'Tariff Master', path: '/master/tariff-masters' , icon: Inventory2Icon},
       { label: 'GL Code Parent', path: '/master/gl-code-parent' , icon: Inventory2Icon},
       { label: 'GL Code Child', path: '/master/gl-code-child' , icon: Inventory2Icon},
