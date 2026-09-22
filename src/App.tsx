@@ -7,6 +7,7 @@ import Currency from './pages/currency/Index';
 import TariffMaster from './pages/tariff/Index';
 import AirportCode from './pages/airportCode/Index';
 import Bank from './pages/bank/Index';
+import Cargo from './pages/cargo/Index';
 import Layout from './components/Layout';
 
 function App() {
@@ -26,6 +27,7 @@ function App() {
           <Route path="/master/tariff-masters" element={<TariffMaster />} />
           <Route path="/master/airport-codes" element={<AirportCode />} />
           <Route path="/master/banks" element={<Bank />} />
+          <Route path="/master/cargos" element={<Cargo />} />
         </Route>
       </Routes>
     </BrowserRouter>

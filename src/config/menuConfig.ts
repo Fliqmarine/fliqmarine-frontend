@@ -6,8 +6,9 @@ import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import PeopleIcon from '@mui/icons-material/People';
 import DirectionsBoatIcon from '@mui/icons-material/DirectionsBoat';
 import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
-import PaidIcon from '@mui/icons-material/Paid';
+import GroupsIcon from '@mui/icons-material/Groups';
 import LocalAirportIcon from '@mui/icons-material/LocalAirport';
+import FactoryIcon from '@mui/icons-material/Factory';
 import InventoryIcon from '@mui/icons-material/Inventory';
 import HistoryIcon from '@mui/icons-material/History';
 import LooksOneIcon from '@mui/icons-material/LooksOne';
@@ -89,8 +90,9 @@ export const menuConfig: MenuItem[] = [
     // icon: Inventory2Icon,
     children: [
       { label: 'Users', path: '/master/users' , icon: PeopleIcon},
+      { label: 'Contact Lists', path: '/master/contacts' , icon: GroupsIcon},
       { label: 'Hub Locations', path: '/master/hub-locations' , icon: LocalShippingIcon},
-      { label: 'Vessels', path: '/master/vessels' , icon: DirectionsBoatIcon},
+      { label: 'Cargo', path: '/master/cargos' , icon: FactoryIcon},
       { label: 'Currency', path: '/master/currencies' , icon: AttachMoneyIcon},
       { label: 'Airport Codes', path: '/master/airport-codes' , icon: LocalAirportIcon},
       { label: 'Bank', path: '/master/banks' , icon: AccountBalanceIcon},
