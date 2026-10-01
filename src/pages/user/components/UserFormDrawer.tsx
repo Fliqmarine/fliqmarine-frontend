@@ -1,9 +1,12 @@
-import { Close } from '@mui/icons-material';
+import { Close, Visibility, VisibilityOff } from '@mui/icons-material';
 import {
+  Autocomplete,
   Box,
   Button,
+  Checkbox,
   Drawer,
   IconButton,
+  InputAdornment,
   MenuItem,
   TextField,
   Typography,
@@ -17,6 +20,9 @@ export type UserFormValues = {
   password: string;
   confirmPassword: string;
   role: string;
+  client: string;
+  hub: string;
+  backupPics: string[];
   status: 'Active' | 'Inactive';
 };
 
@@ -31,9 +37,27 @@ const initialValues: UserFormValues = {
   email: '',
   password: '',
   confirmPassword: '',
-  role: 'User',
+  role: 'Operational Executive',
+  client: '',
+  hub: '',
+  backupPics: [],
   status: 'Active',
 };
+
+const ROLES = [
+  'Client',
+  'Hub',
+  'Documentation',
+  'Operational Executive',
+  'Manager',
+  'Finance Executive',
+  'Finance Manager',
+];
+
+// TODO: replace these placeholder lists with data from your API / props
+const CLIENT_OPTIONS = ['Client A', 'Client B', 'Client C'];
+const HUB_OPTIONS = ['Hub 1', 'Hub 2', 'Hub 3'];
+const BACKUP_PIC_OPTIONS = ['Person 1', 'Person 2', 'Person 3', 'Person 4'];
 
 export default function UserFormDrawer({
   open,
@@ -41,7 +65,10 @@ export default function UserFormDrawer({
   onSubmit,
 }: UserFormDrawerProps) {
   const [values, setValues] = useState<UserFormValues>(initialValues);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const theme = useTheme();
+
   const handleChange = <K extends keyof UserFormValues>(
     key: K,
     value: UserFormValues[K],
@@ -49,21 +76,47 @@ export default function UserFormDrawer({
     setValues((prev) => ({ ...prev, [key]: value }));
   };
 
+  // Changing the role clears the role-specific fields so stale values aren't submitted
+  const handleRoleChange = (role: string) => {
+    setValues((prev) => ({
+      ...prev,
+      role,
+      client: '',
+      hub: '',
+      backupPics: [],
+    }));
+  };
+
+  const resetForm = () => {
+    setValues(initialValues);
+    setShowPassword(false);
+    setShowConfirmPassword(false);
+  };
+
   const handleSubmit = () => {
     onSubmit(values);
-    setValues(initialValues);
+    resetForm();
     onClose();
   };
 
   const handleClose = () => {
-    setValues(initialValues);
+    resetForm();
     onClose();
   };
+
+  const isClient = values.role === 'Client';
+  const isHub = values.role === 'Hub';
+  const isOperationalExecutive = values.role === 'Operational Executive';
+
+  const isInvalid =
+    !values.name ||
+    !values.email ||
+    (isClient && !values.client) ||
+    (isHub && !values.hub);
 
   return (
     <Drawer anchor="right" open={open} onClose={handleClose}>
       <Box sx={{ width: 500, display: 'flex', flexDirection: 'column', height: '100%' }}>
-        
         <Box
           sx={{
             display: 'flex',
@@ -87,7 +140,17 @@ export default function UserFormDrawer({
 
         <Box sx={{ height: '2px', width: '100%', bgcolor: theme.palette.primary.main }} />
 
-        <Box sx={{ flex: 1, px: 2.5, py: 2.5, display: 'flex', flexDirection: 'column', gap: 2.5 }}>
+        <Box
+          sx={{
+            flex: 1,
+            overflowY: 'auto',
+            px: 2.5,
+            py: 2.5,
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 2.5,
+          }}
+        >
           <TextField
             label="Name"
             size="small"
@@ -109,18 +172,56 @@ export default function UserFormDrawer({
             label="Password"
             size="small"
             fullWidth
-            type="password"
+            type={showPassword ? 'text' : 'password'}
             value={values.password}
             onChange={(e) => handleChange('password', e.target.value)}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton
+                    size="small"
+                    edge="end"
+                    aria-label={showPassword ? 'Hide password' : 'Show password'}
+                    onClick={() => setShowPassword((prev) => !prev)}
+                    onMouseDown={(e) => e.preventDefault()}
+                  >
+                    {showPassword ? (
+                      <VisibilityOff fontSize="small" />
+                    ) : (
+                      <Visibility fontSize="small" />
+                    )}
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
           />
 
           <TextField
             label="Confirm Password"
             size="small"
             fullWidth
-            type="password"
+            type={showConfirmPassword ? 'text' : 'password'}
             value={values.confirmPassword}
             onChange={(e) => handleChange('confirmPassword', e.target.value)}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton
+                    size="small"
+                    edge="end"
+                    aria-label={showConfirmPassword ? 'Hide password' : 'Show password'}
+                    onClick={() => setShowConfirmPassword((prev) => !prev)}
+                    onMouseDown={(e) => e.preventDefault()}
+                  >
+                    {showConfirmPassword ? (
+                      <VisibilityOff fontSize="small" />
+                    ) : (
+                      <Visibility fontSize="small" />
+                    )}
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
           />
 
           <TextField
@@ -129,17 +230,70 @@ export default function UserFormDrawer({
             size="small"
             fullWidth
             value={values.role}
-            onChange={(e) => handleChange('role', e.target.value)}
+            onChange={(e) => handleRoleChange(e.target.value)}
           >
-            <MenuItem value="Client">Client</MenuItem>
-            <MenuItem value="Hub">Hub</MenuItem>
-            <MenuItem value="Documentation">Documentation</MenuItem>
-            <MenuItem value="Key Account Manager">Key Account Manager</MenuItem>
-            <MenuItem value="Operations Manager">Operations Manager</MenuItem>
-            <MenuItem value="Manager">Manager</MenuItem>
-            <MenuItem value="Finance Executive">Finance Executive</MenuItem>
-            <MenuItem value="Finance Manager">Finance Manager</MenuItem>
+            {ROLES.map((role) => (
+              <MenuItem key={role} value={role}>
+                {role}
+              </MenuItem>
+            ))}
           </TextField>
+
+          {isClient && (
+            <TextField
+              select
+              label="Client"
+              size="small"
+              fullWidth
+              value={values.client}
+              onChange={(e) => handleChange('client', e.target.value)}
+            >
+              {CLIENT_OPTIONS.map((client) => (
+                <MenuItem key={client} value={client}>
+                  {client}
+                </MenuItem>
+              ))}
+            </TextField>
+          )}
+
+          {isHub && (
+            <TextField
+              select
+              label="Hub"
+              size="small"
+              fullWidth
+              value={values.hub}
+              onChange={(e) => handleChange('hub', e.target.value)}
+            >
+              {HUB_OPTIONS.map((hub) => (
+                <MenuItem key={hub} value={hub}>
+                  {hub}
+                </MenuItem>
+              ))}
+            </TextField>
+          )}
+
+          {isOperationalExecutive && (
+            <Autocomplete
+              multiple
+              disableCloseOnSelect
+              size="small"
+              fullWidth
+              options={BACKUP_PIC_OPTIONS}
+              value={values.backupPics}
+              onChange={(_, newValue) => handleChange('backupPics', newValue)}
+              renderOption={(props, option, { selected }) => {
+                const { key, ...optionProps } = props as typeof props & { key: string };
+                return (
+                  <li key={key} {...optionProps}>
+                    <Checkbox size="small" checked={selected} sx={{ mr: 1, p: 0.5 }} />
+                    {option}
+                  </li>
+                );
+              }}
+              renderInput={(params) => <TextField {...params} label="Backup PIC" />}
+            />
+          )}
 
           <TextField
             select
@@ -175,13 +329,12 @@ export default function UserFormDrawer({
           <Button
             variant="contained"
             onClick={handleSubmit}
-            disabled={!values.name || !values.email}
+            disabled={isInvalid}
             sx={{ textTransform: 'none', fontWeight: 600 }}
           >
             Create
           </Button>
         </Box>
-        
       </Box>
     </Drawer>
   );

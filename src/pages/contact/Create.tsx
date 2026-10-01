@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { Box, TextField, Typography } from "@mui/material";
+import { Box, TextField, Typography, Button } from "@mui/material";
 import type { OutlinedTextFieldProps } from "@mui/material";
 import { alpha } from "@mui/material/styles";
 import type { SxProps, Theme } from "@mui/material/styles";
@@ -190,6 +190,33 @@ export default function Create() {
           </SectionCard>
         </Box>
       </Box>
+      <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'flex-end',
+            gap: 1,
+            px: 2.5,
+            py: 2,
+            borderTop: '1px solid',
+            borderColor: 'divider',
+          }}
+        >
+          <Button
+            // onClick={handleClose}
+            sx={{ textTransform: 'none', fontWeight: 600 }}
+          >
+            Cancel
+          </Button>
+
+          <Button
+            variant="contained"
+            // onClick={handleSubmit}
+            // disabled={!values.name || !values.code || !values.rate}
+            sx={{ textTransform: 'none', fontWeight: 600 }}
+          >
+            Create
+          </Button>
+        </Box>
     </Box>
   );
 }
