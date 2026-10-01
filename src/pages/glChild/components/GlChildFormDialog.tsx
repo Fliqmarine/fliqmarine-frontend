@@ -10,36 +10,36 @@ import {
 } from '@mui/material';
 import { useState } from 'react';
 
-export type GlParentFormValues = {
+export type GlChildFormValues = {
   name: string;
+  gl_parent_name: string;
   code: string;
-  type: string;
   status: 'Active' | 'Inactive';
 };
 
-type GlParentFormDrawerProps = {
+type GlChildFormDrawerProps = {
   open: boolean;
   onClose: () => void;
-  onSubmit: (values: GlParentFormValues) => void;
+  onSubmit: (values: GlChildFormValues) => void;
 };
 
-const initialValues: GlParentFormValues = {
+const initialValues: GlChildFormValues = {
   name: '',
+  gl_parent_name: '',
   code: '',
-  type: '',
   status: 'Active',
 };
 
-export default function GlParentFormDrawer({
+export default function GlChildFormDrawer({
   open,
   onClose,
   onSubmit,
-}: GlParentFormDrawerProps) {
-  const [values, setValues] = useState<GlParentFormValues>(initialValues);
+}: GlChildFormDrawerProps) {
+  const [values, setValues] = useState<GlChildFormValues>(initialValues);
 
-  const handleChange = <K extends keyof GlParentFormValues>(
+  const handleChange = <K extends keyof GlChildFormValues>(
     key: K,
-    value: GlParentFormValues[K],
+    value: GlChildFormValues[K],
   ) => {
     setValues((prev) => ({ ...prev, [key]: value }));
   };
@@ -71,7 +71,7 @@ export default function GlParentFormDrawer({
           }}
         >
           <Typography variant="subtitle1" sx={{ fontWeight: 700, color: 'white' }}>
-            Create GL code Parent
+            Create GL code Children
           </Typography>
 
           <IconButton size="small" onClick={handleClose}>
@@ -89,20 +89,20 @@ export default function GlParentFormDrawer({
           />
 
           <TextField
-            label="Code"
+            label="GL Code Parent"
             size="small"
             fullWidth
-            value={values.code}
-            onChange={(e) => handleChange('code', e.target.value)}
+            value={values.gl_parent_name}
+            onChange={(e) => handleChange('gl_parent_name', e.target.value)}
           />
 
           <TextField
-            label="Type"
+            label="Code"
             size="small"
             fullWidth
             type="number"
-            value={values.type}
-            onChange={(e) => handleChange('type', e.target.value)}
+            value={values.code}
+            onChange={(e) => handleChange('code', e.target.value)}
           />
 
           <TextField
