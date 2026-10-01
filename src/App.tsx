@@ -8,6 +8,8 @@ import TariffMaster from './pages/tariff/Index';
 import AirportCode from './pages/airportCode/Index';
 import Bank from './pages/bank/Index';
 import Cargo from './pages/cargo/Index';
+import ContactList from './pages/contact/Index';
+import ContactCreate from './pages/contact/Create';
 import Layout from './components/Layout';
 
 function App() {
@@ -28,6 +30,8 @@ function App() {
           <Route path="/master/airport-codes" element={<AirportCode />} />
           <Route path="/master/banks" element={<Bank />} />
           <Route path="/master/cargos" element={<Cargo />} />
+          <Route path="/master/contacts" element={<ContactList />} />
+          <Route path="/master/contacts/create" element={<ContactCreate />} />
         </Route>
       </Routes>
     </BrowserRouter>
