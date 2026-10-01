@@ -9,6 +9,7 @@ import AirportCode from './pages/airportCode/Index';
 import Bank from './pages/bank/Index';
 import Cargo from './pages/cargo/Index';
 import Vendor from './pages/vendor/Index';
+import GlCodeParent from './pages/glParent/Index';
 import ContactList from './pages/contact/Index';
 import ContactCreate from './pages/contact/Create';
 import Layout from './components/Layout';
@@ -34,6 +35,7 @@ function App() {
           <Route path="/master/contacts" element={<ContactList />} />
           <Route path="/master/contacts/create" element={<ContactCreate />} />
           <Route path="/master/vendors" element={<Vendor />} />
+          <Route path="/master/gl_code_parents" element={<GlCodeParent />} />
         </Route>
       </Routes>
     </BrowserRouter>
