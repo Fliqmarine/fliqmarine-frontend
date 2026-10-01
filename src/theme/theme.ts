@@ -14,6 +14,28 @@ declare module '@mui/material/styles' {
   }
 }
 
+// Brand palette — single source of truth for all theme colors
+const COLORS = {
+  primaryLightMain: '#97AB3E',
+  // primaryLightMain: '#dd9000',
+  primaryDarkMain: '#fbfbfb',
+  primaryLight: '#5E92F3',
+  primaryHoverLight: '#00283e',
+  primaryHoverDark: '#97AB3E',
+  // primaryHoverDark: '#dd9000',
+  primaryContrastLight: '#fcfdff',
+  primaryContrastDark: '#00283e',
+
+  secondaryLight: '#0a1929',
+  secondaryDark: '#1b2a41',
+
+  backgroundDefaultLight: '#fafff8',
+  backgroundDefaultDark: '#0a1929',
+
+  backgroundPaperLight: '#ffffff',
+  backgroundPaperDark: '#0f1b2a',
+} as const;
+
 /**
  * Returns a fully configured theme for the given mode ('light' | 'dark').
  * Primary color stays the same dark-blue brand color in both modes;
@@ -24,17 +46,17 @@ export const getTheme = (mode: PaletteMode): Theme =>
     palette: {
       mode,
       primary: {
-        main: mode === 'dark' ? '#fbfbfb' : '#163058',
-        light: '#5E92F3',
-        dark: mode === 'dark' ? '#90dcff' : '#050c18', // hover color for contained buttons
-        contrastText: mode === 'dark' ? '#00283e' : '#fcfdff',
+        main: mode === 'dark' ? COLORS.primaryDarkMain : COLORS.primaryLightMain,
+        light: COLORS.primaryLight,
+        dark: mode === 'dark' ? COLORS.primaryHoverDark : COLORS.primaryHoverLight, // hover color for contained buttons
+        contrastText: mode === 'dark' ? COLORS.primaryContrastDark : COLORS.primaryContrastLight,
       },
       secondary: {
-        main: mode === 'dark' ? '#1b2a41' : '#0a1929',
+        main: mode === 'dark' ? COLORS.secondaryDark : COLORS.secondaryLight,
       },
       background: {
-        default: mode === 'dark' ? '#0a1929' : '#f5f6fa',
-        paper: mode === 'dark' ? '#0f1b2a' : '#ffffff',
+        default: mode === 'dark' ? COLORS.backgroundDefaultDark : COLORS.backgroundDefaultLight,
+        paper: mode === 'dark' ? COLORS.backgroundPaperDark : COLORS.backgroundPaperLight,
       },
     },
   });

@@ -86,20 +86,36 @@ export const menuConfig: MenuItem[] = [
     ],
   },
   {
+    label: 'Ops Master',
+    // icon: Inventory2Icon,
+    children: [
+      { label: 'Hub', path: '/master/hubs' , icon: LocalShippingIcon},
+      { label: 'Contact Lists', path: '/master/contacts' , icon: GroupsIcon},
+      { label: 'Client', path: '/master/clients' , icon: AttachMoneyIcon},
+      { label: 'Vessel', path: '/master/vessels' , icon: AttachMoneyIcon},
+      { label: 'Hub Locations', path: '/master/hub-locations' , icon: AttachMoneyIcon},
+    ],
+  },
+  {
+    label: 'Finance Master',
+    // icon: Inventory2Icon,
+    children: [
+      { label: 'Currency', path: '/master/currencies' , icon: GroupsIcon},
+      { label: 'Vendors', path: '/master/vendors' , icon: LocalShippingIcon},
+      { label: 'Banks', path: '/master/banks' , icon: AttachMoneyIcon},
+      { label: 'GL Code Parent', path: '/master/gl_code_parents' , icon: AttachMoneyIcon},
+      { label: 'GL Code Child', path: '/master/gl_code_children' , icon: AttachMoneyIcon},
+      { label: 'GL Code Sub Child', path: '/master/gl_code_sub_children' , icon: AttachMoneyIcon},
+    ],
+  },
+  {
     label: 'Master',
     // icon: Inventory2Icon,
     children: [
       { label: 'Users', path: '/master/users' , icon: PeopleIcon},
-      { label: 'Contact Lists', path: '/master/contacts' , icon: GroupsIcon},
-      { label: 'Hub Locations', path: '/master/hub-locations' , icon: LocalShippingIcon},
       { label: 'Cargo', path: '/master/cargos' , icon: FactoryIcon},
-      { label: 'Currency', path: '/master/currencies' , icon: AttachMoneyIcon},
       { label: 'Airport Codes', path: '/master/airport-codes' , icon: LocalAirportIcon},
-      { label: 'Bank', path: '/master/banks' , icon: AccountBalanceIcon},
       { label: 'Tariff Master', path: '/master/tariff-masters' , icon: Inventory2Icon},
-      { label: 'GL Code Parent', path: '/master/gl-code-parent' , icon: Inventory2Icon},
-      { label: 'GL Code Child', path: '/master/gl-code-child' , icon: Inventory2Icon},
-      { label: 'GL Code SubChild', path: '/master/gl-code-subchild' , icon: Inventory2Icon},
     ],
   },
 ];

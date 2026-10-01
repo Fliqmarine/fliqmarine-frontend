@@ -9,6 +9,7 @@ import {
   Typography,
 } from '@mui/material';
 import { useState } from 'react';
+import { useTheme } from '@mui/material/styles';
 
 export type UserFormValues = {
   name: string;
@@ -40,7 +41,7 @@ export default function UserFormDrawer({
   onSubmit,
 }: UserFormDrawerProps) {
   const [values, setValues] = useState<UserFormValues>(initialValues);
-
+  const theme = useTheme();
   const handleChange = <K extends keyof UserFormValues>(
     key: K,
     value: UserFormValues[K],
@@ -62,6 +63,7 @@ export default function UserFormDrawer({
   return (
     <Drawer anchor="right" open={open} onClose={handleClose}>
       <Box sx={{ width: 500, display: 'flex', flexDirection: 'column', height: '100%' }}>
+        
         <Box
           sx={{
             display: 'flex',
@@ -82,6 +84,8 @@ export default function UserFormDrawer({
             <Close fontSize="small" sx={{ color: 'white' }} />
           </IconButton>
         </Box>
+
+        <Box sx={{ height: '2px', width: '100%', bgcolor: theme.palette.primary.main }} />
 
         <Box sx={{ flex: 1, px: 2.5, py: 2.5, display: 'flex', flexDirection: 'column', gap: 2.5 }}>
           <TextField
@@ -177,6 +181,7 @@ export default function UserFormDrawer({
             Create
           </Button>
         </Box>
+        
       </Box>
     </Drawer>
   );

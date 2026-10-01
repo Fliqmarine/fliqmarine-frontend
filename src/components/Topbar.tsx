@@ -1,4 +1,4 @@
-import { useState, MouseEvent } from 'react';
+import { useState, useRef, MouseEvent } from 'react';
 import {
   AppBar,
   Toolbar,
@@ -16,6 +16,9 @@ import {
   List,
   ListItemButton,
   Collapse,
+  Popper,
+  Paper,
+  MenuList,
   useMediaQuery,
 } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
@@ -31,9 +34,20 @@ import { LAYOUT_MODE } from '../config/layoutConfig';
 import { SIDEBAR_WIDTH } from './Sidebar';
 import ThemeToggleButton from './ThemeToggleButton';
 
-// Keep in sync with Sidebar.tsx
-const ACCENT = '#5B7CFA';
+// Keep in sync with Sidebar.tsx — same brand colors as before, just used
+// with more restraint: olive now marks state (active/selected) rather
+// than filling backgrounds, so it reads as an accent, not a block of color.
+const ACCENT = '#97AB3E';
 const SURFACE = '#0b1c39';
+const SURFACE_RAISED = '#0e2143'; // one step lighter, for hover/pressed states
+const INK = '#f6f7f5';
+const INK_DIM = 'rgba(246, 247, 245, 0.56)';
+const HAIRLINE = 'rgba(151, 171, 62, 0.22)'; // olive hairline instead of white-on-white
+
+// A distinct modern grotesk — more character than a generic system stack,
+// while staying clean enough for dense UI text.
+const FONT_STACK =
+  '"Plus Jakarta Sans", "General Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
 
 // Static placeholder user — no auth/session, just for display
 const STATIC_USER = {
@@ -53,26 +67,54 @@ export default function Topbar() {
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const [expandedMobileGroup, setExpandedMobileGroup] = useState<string | null>(null);
 
+  // Short delay before closing so the cursor can travel from the nav
+  // button to the dropdown without the dropdown disappearing.
+  const closeTimer = useRef<number | null>(null);
+
   const isSidebarMode = LAYOUT_MODE === 'sidebar';
   const showTopNav = !isSidebarMode && !isMobile;
 
-  function handleMenuOpen(event: MouseEvent<HTMLElement>, item: MenuItem) {
-    if (item.children) {
-      setMenuAnchor(event.currentTarget);
-      setOpenMenuLabel(item.label);
-    } else if (item.path) {
-      navigate(item.path);
+  function cancelClose() {
+    if (closeTimer.current) {
+      window.clearTimeout(closeTimer.current);
+      closeTimer.current = null;
     }
   }
 
   function handleMenuClose() {
+    cancelClose();
     setMenuAnchor(null);
     setOpenMenuLabel(null);
   }
 
+  function scheduleClose() {
+    cancelClose();
+    closeTimer.current = window.setTimeout(handleMenuClose, 120);
+  }
+
+  function handleMenuOpen(el: HTMLElement, item: MenuItem) {
+    cancelClose();
+    if (item.children) {
+      setMenuAnchor(el);
+      setOpenMenuLabel(item.label);
+    } else {
+      handleMenuClose();
+    }
+  }
+
   function isItemActive(item: MenuItem): boolean {
-    if (item.path === location.pathname) return true;
-    return !!item.children?.some((child) => child.path === location.pathname);
+    if (
+      location.pathname === item.path ||
+      location.pathname.startsWith(`${item.path}/`)
+    ) {
+      return true;
+    }
+
+    return !!item.children?.some(
+      (child) =>
+        location.pathname === child.path ||
+        location.pathname.startsWith(`${child.path}/`)
+    );
   }
 
   function handleLogout() {
@@ -104,6 +146,22 @@ export default function Topbar() {
     return 'Dashboard';
   })();
 
+  // Shared popover styling — deep navy panel, olive hairline, soft
+  // diffused shadow instead of MUI's default grey card shadow.
+  const menuSlotProps = {
+    paper: {
+      sx: {
+        mt: 1,
+        borderRadius: 2,
+        bgcolor: SURFACE_RAISED,
+        border: `1px solid ${HAIRLINE}`,
+        boxShadow: '0 20px 48px rgba(3, 9, 22, 0.55)',
+        color: INK,
+        overflow: 'hidden',
+      },
+    },
+  };
+
   return (
     <>
       <AppBar
@@ -111,8 +169,9 @@ export default function Topbar() {
         elevation={0}
         sx={{
           bgcolor: SURFACE,
-          // zoom: 0.85,
-          borderBottom: '1px solid rgba(255,255,255,0.06)',
+          borderBottom: `1px solid ${HAIRLINE}`,
+          boxShadow: '0 1px 0 rgba(0,0,0,0.2), 0 12px 32px rgba(3, 9, 22, 0.28)',
+          fontFamily: FONT_STACK,
           ...(isSidebarMode &&
             !isMobile && {
               width: `calc(100% - ${SIDEBAR_WIDTH}px)`,
@@ -120,13 +179,18 @@ export default function Topbar() {
             }),
         }}
       >
-        <Toolbar sx={{ gap: { xs: 1, sm: 1.5 }, px: { xs: 1.5, sm: 3 } }}>
+        <Toolbar sx={{ gap: { xs: 1, sm: 1.5 }, px: { xs: 1.5, sm: 3 }, minHeight: { xs: 52, sm: 58 } }}>
           {/* Hamburger — top-nav layout on mobile, or sidebar layout on mobile */}
-          {(!isSidebarMode || isSidebarMode) && isMobile && (
+          {isMobile && (
             <IconButton
               edge="start"
               onClick={() => setMobileNavOpen(true)}
-              sx={{ color: '#fff', mr: 0.5 }}
+              sx={{
+                color: INK_DIM,
+                mr: 0.5,
+                borderRadius: 1.5,
+                '&:hover': { bgcolor: 'rgba(255,255,255,0.06)', color: INK },
+              }}
             >
               <MenuIcon />
             </IconButton>
@@ -136,15 +200,20 @@ export default function Topbar() {
             <Typography
               variant="h6"
               sx={{
-                fontWeight: 700,
-                letterSpacing: '-0.01em',
-                fontSize: { xs: 15, sm: 18 },
-                color: '#fcfcff',
-                mr: { xs: 1, md: 4 },
+                fontFamily: FONT_STACK,
+                fontWeight: 600,
+                letterSpacing: '0.06em',
+                fontSize: { xs: 12.5, sm: 13.5 },
+                color: INK,
+                mr: { xs: 1.5, md: 5 },
                 whiteSpace: 'nowrap',
+                textTransform: 'uppercase',
               }}
             >
-              FLIQ MARINE
+              Fliq{' '}
+              <Box component="span" sx={{ color: ACCENT }}>
+                Marine
+              </Box>
             </Typography>
           )}
 
@@ -153,25 +222,42 @@ export default function Topbar() {
               {menuConfig.map((item) => {
                 const active = isItemActive(item);
                 return (
-                  <Button
+                  <Box
                     key={item.label}
-                    onClick={(e) => handleMenuOpen(e, item)}
-                    startIcon={item.icon ? <item.icon sx={{ fontSize: 18 }} /> : undefined}
-                    endIcon={item.children ? <ExpandMoreIcon fontSize="small" /> : undefined}
-                    sx={{
-                      color: active ? ACCENT : 'rgba(255, 255, 255, 0.65)',
-                      bgcolor: active ? 'rgba(250, 250, 252, 0.1)' : 'transparent',
-                      textTransform: 'none',
-                      fontWeight: active ? 600 : 500,
-                      fontSize: 14,
-                      letterSpacing: '-0.005em',
-                      px: 1.75,
-                      borderRadius: 2,
-                      '&:hover': { bgcolor: 'rgba(255, 255, 255, 0.08)' },
-                    }}
+                    onMouseEnter={(e: MouseEvent<HTMLElement>) =>
+                      handleMenuOpen(e.currentTarget, item)
+                    }
+                    onMouseLeave={scheduleClose}
                   >
-                    {item.label}
-                  </Button>
+                    <Button
+                      onClick={() => {
+                        if (item.path && !item.children) navigate(item.path);
+                      }}
+                      disableRipple
+                      startIcon={item.icon ? <item.icon sx={{ fontSize: 17 }} /> : undefined}
+                      endIcon={item.children ? <ExpandMoreIcon sx={{ fontSize: 15 }} /> : undefined}
+                      sx={{
+                        fontFamily: FONT_STACK,
+                        color: active ? SURFACE : INK_DIM,
+                        bgcolor: active ? ACCENT : 'transparent',
+                        textTransform: 'none',
+                        fontWeight: active ? 700 : 500,
+                        fontSize: 13,
+                        letterSpacing: '-0.005em',
+                        px: 1.5,
+                        py: 0.5,
+                        minHeight: 32,
+                        borderRadius: 999,
+                        transition: 'background-color 160ms ease, color 160ms ease',
+                        '&:hover': {
+                          bgcolor: active ? ACCENT : 'rgba(255,255,255,0.06)',
+                          color: active ? SURFACE : INK,
+                        },
+                      }}
+                    >
+                      {item.label}
+                    </Button>
+                  </Box>
                 );
               })}
             </Box>
@@ -181,10 +267,11 @@ export default function Topbar() {
             <Typography
               variant="h6"
               sx={{
+                fontFamily: FONT_STACK,
                 fontWeight: 600,
                 letterSpacing: '-0.01em',
-                fontSize: { xs: 15, sm: 18 },
-                color: '#fcfcfc',
+                fontSize: { xs: 15.5, sm: 17.5 },
+                color: INK,
                 flexGrow: 1,
               }}
               noWrap
@@ -193,38 +280,62 @@ export default function Topbar() {
             </Typography>
           )}
 
-          {/* Desktop submenu popover */}
-          <Menu
+          {/* Desktop submenu — opens on hover (non-modal Popper, no backdrop) */}
+          <Popper
+            open={!!menuAnchor && !!activeChildren}
             anchorEl={menuAnchor}
-            open={!!menuAnchor}
-            onClose={handleMenuClose}
-            anchorOrigin={{ horizontal: 'left', vertical: 'bottom' }}
-            transformOrigin={{ horizontal: 'left', vertical: 'top' }}
-            slotProps={{ paper: { sx: { mt: 1, borderRadius: 2 } } }}
+            placement="bottom-start"
+            sx={{ zIndex: theme.zIndex.appBar + 1 }}
+            onMouseEnter={cancelClose}
+            onMouseLeave={scheduleClose}
           >
-            {activeChildren?.map((child) => (
-              <MuiMenuItem
-                key={child.label}
-                selected={child.path === location.pathname}
-                onClick={() => goTo(child.path)}
-                sx={{ fontSize: 14 }}
+            {/* pt (not mt) so there's no dead gap between button and dropdown */}
+            <Box sx={{ pt: 1 }}>
+              <Paper
+                elevation={0}
+                sx={{ ...menuSlotProps.paper.sx, mt: 0, minWidth: 190, py: 0.5 }}
               >
-                {child.icon && (
-                  <ListItemIcon>
-                    <child.icon fontSize="small" />
-                  </ListItemIcon>
-                )}
-                {child.label}
-              </MuiMenuItem>
-            ))}
-          </Menu>
+                <MenuList autoFocusItem={false} sx={{ py: 0 }}>
+                {activeChildren?.map((child) => (
+                  <MuiMenuItem
+                    key={child.label}
+                    selected={child.path === location.pathname}
+                    onClick={() => {
+                      goTo(child.path);
+                      handleMenuClose();
+                    }}
+                    sx={{
+                      fontFamily: FONT_STACK,
+                      fontSize: 13.5,
+                      fontWeight: 500,
+                      color: INK_DIM,
+                      mx: 0.75,
+                      my: 0.25,
+                      borderRadius: 1.5,
+                      '&.Mui-selected': { bgcolor: 'rgba(151, 171, 62, 0.14)', color: ACCENT },
+                      '&.Mui-selected:hover': { bgcolor: 'rgba(151, 171, 62, 0.2)' },
+                      '&:hover': { bgcolor: 'rgba(255,255,255,0.05)', color: INK },
+                    }}
+                  >
+                    {child.icon && (
+                      <ListItemIcon sx={{ color: 'inherit', minWidth: 32 }}>
+                        <child.icon fontSize="small" />
+                      </ListItemIcon>
+                    )}
+                    {child.label}
+                  </MuiMenuItem>
+                ))}
+                </MenuList>
+              </Paper>
+            </Box>
+          </Popper>
 
           <Box sx={{ display: 'flex', alignItems: 'center', gap: { xs: 0.5, sm: 1 } }}>
             <ThemeToggleButton />
             <Divider
               orientation="vertical"
               flexItem
-              sx={{ mx: 1, my: 1.5, display: { xs: 'none', sm: 'block' } }}
+              sx={{ mx: 1, my: 1.5, display: { xs: 'none', sm: 'block' }, borderColor: HAIRLINE }}
             />
 
             <Box
@@ -232,31 +343,53 @@ export default function Topbar() {
               sx={{
                 display: 'flex',
                 alignItems: 'center',
-                gap: 1,
+                gap: 1.1,
                 cursor: 'pointer',
-                px: 1,
-                py: 0.5,
+                px: 0.75,
+                py: 0.4,
                 borderRadius: 2,
-                '&:hover': { bgcolor: 'rgba(246, 247, 250, 0.06)' },
+                transition: 'background-color 160ms ease',
+                '&:hover': { bgcolor: 'rgba(255,255,255,0.05)' },
               }}
             >
-              <Avatar sx={{ bgcolor: ACCENT, width: 34, height: 34, fontSize: 13, fontWeight: 600 }}>
+              <Avatar
+                sx={{
+                  bgcolor: 'rgba(151, 171, 62, 0.16)',
+                  color: ACCENT,
+                  width: 30,
+                  height: 30,
+                  fontSize: 11.5,
+                  fontWeight: 700,
+                  fontFamily: FONT_STACK,
+                  border: `1px solid ${HAIRLINE}`,
+                }}
+              >
                 {initials}
               </Avatar>
               <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
                 <Typography
                   variant="body2"
-                  sx={{ fontWeight: 600, letterSpacing: '-0.005em', color: '#f9f9f9', lineHeight: 1.2 }}
+                  sx={{
+                    fontFamily: FONT_STACK,
+                    fontWeight: 600,
+                    letterSpacing: '-0.005em',
+                    color: INK,
+                    lineHeight: 1.25,
+                    fontSize: 13.5,
+                  }}
                 >
                   {STATIC_USER.name}
                 </Typography>
-                <Typography variant="caption" sx={{ color: 'rgba(254, 254, 255, 0.5)', fontSize: 11.5 }}>
+                <Typography
+                  variant="caption"
+                  sx={{ fontFamily: FONT_STACK, color: INK_DIM, fontSize: 11.5 }}
+                >
                   {STATIC_USER.email}
                 </Typography>
               </Box>
               <ExpandMoreIcon
                 fontSize="small"
-                sx={{ color: 'rgba(255, 255, 255, 0.4)', display: { xs: 'none', sm: 'block' } }}
+                sx={{ color: INK_DIM, display: { xs: 'none', sm: 'block' }, fontSize: 18 }}
               />
             </Box>
 
@@ -266,20 +399,32 @@ export default function Topbar() {
               onClose={() => setProfileAnchor(null)}
               anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
               transformOrigin={{ horizontal: 'right', vertical: 'top' }}
-              slotProps={{ paper: { sx: { mt: 1, minWidth: 200, borderRadius: 2 } } }}
+              slotProps={{ paper: { sx: { ...menuSlotProps.paper.sx, minWidth: 210 } } }}
             >
               <Box sx={{ px: 2, py: 1.25, display: { xs: 'block', sm: 'none' } }}>
-                <Typography variant="body2" sx={{ fontWeight: 600 }}>
+                <Typography sx={{ fontFamily: FONT_STACK, fontWeight: 600, fontSize: 13.5, color: INK }}>
                   {STATIC_USER.name}
                 </Typography>
-                <Typography variant="caption" color="text.secondary">
+                <Typography sx={{ fontFamily: FONT_STACK, fontSize: 11.5, color: INK_DIM }}>
                   {STATIC_USER.email}
                 </Typography>
               </Box>
-              <Divider sx={{ display: { xs: 'block', sm: 'none' } }} />
+              <Divider sx={{ display: { xs: 'block', sm: 'none' }, borderColor: HAIRLINE }} />
 
-              <MuiMenuItem onClick={handleLogout} sx={{ fontSize: 14 }}>
-                <ListItemIcon>
+              <MuiMenuItem
+                onClick={handleLogout}
+                sx={{
+                  fontFamily: FONT_STACK,
+                  fontSize: 13.5,
+                  fontWeight: 500,
+                  color: INK_DIM,
+                  mx: 0.75,
+                  my: 0.25,
+                  borderRadius: 1.5,
+                  '&:hover': { bgcolor: 'rgba(255,255,255,0.05)', color: INK },
+                }}
+              >
+                <ListItemIcon sx={{ color: 'inherit', minWidth: 32 }}>
                   <LogoutIcon fontSize="small" />
                 </ListItemIcon>
                 Logout
@@ -294,16 +439,35 @@ export default function Topbar() {
         anchor="left"
         open={isMobile && mobileNavOpen}
         onClose={() => setMobileNavOpen(false)}
-        slotProps={{ paper: { sx: { width: 260, bgcolor: SURFACE, color: '#fff' } } }}
+        slotProps={{
+          paper: {
+            sx: {
+              width: 268,
+              bgcolor: SURFACE,
+              color: INK,
+              fontFamily: FONT_STACK,
+              borderRight: `1px solid ${HAIRLINE}`,
+            },
+          },
+        }}
       >
-        <Box sx={{ px: 2.5, py: 2.5 }}>
-          <Typography sx={{ fontWeight: 700, letterSpacing: '-0.01em', fontSize: 16, color: '#fcfcff' }}>
-            FLIQ MARINE
+        <Box sx={{ px: 2.75, py: 2.75 }}>
+          <Typography
+            sx={{
+              fontFamily: FONT_STACK,
+              fontWeight: 600,
+              letterSpacing: '0.06em',
+              fontSize: 13.5,
+              color: INK,
+              textTransform: 'uppercase',
+            }}
+          >
+            Fliq <Box component="span" sx={{ color: ACCENT }}>Marine</Box>
           </Typography>
         </Box>
-        <Divider sx={{ borderColor: 'rgba(255,255,255,0.08)' }} />
+        <Divider sx={{ borderColor: HAIRLINE }} />
 
-        <List sx={{ py: 1 }}>
+        <List sx={{ py: 1.25, px: 1 }}>
           {menuConfig.map((item) => {
             const active = isItemActive(item);
             const isExpanded = expandedMobileGroup === item.label;
@@ -317,10 +481,15 @@ export default function Topbar() {
                       : goTo(item.path)
                   }
                   sx={{
-                    px: 2.5,
+                    px: 1.75,
                     py: 1.1,
-                    color: active ? ACCENT : 'rgba(255,255,255,0.8)',
+                    borderRadius: 1.5,
+                    mb: 0.25,
+                    color: active ? ACCENT : INK_DIM,
+                    bgcolor: active ? 'rgba(151, 171, 62, 0.12)' : 'transparent',
                     gap: 1.25,
+                    transition: 'background-color 160ms ease, color 160ms ease',
+                    '&:hover': { bgcolor: active ? 'rgba(151, 171, 62, 0.16)' : 'rgba(255,255,255,0.05)' },
                   }}
                 >
                   {item.icon && (
@@ -331,7 +500,14 @@ export default function Topbar() {
                   <ListItemText
                     primary={item.label}
                     slotProps={{
-                      primary: { sx: { fontWeight: active ? 600 : 500, fontSize: 14.5, letterSpacing: '-0.005em' } },
+                      primary: {
+                        sx: {
+                          fontFamily: FONT_STACK,
+                          fontWeight: active ? 600 : 500,
+                          fontSize: 14,
+                          letterSpacing: '-0.005em',
+                        },
+                      },
                     }}
                   />
                   {item.children && (isExpanded ? <ExpandLessIcon fontSize="small" /> : <ExpandMoreIcon fontSize="small" />)}
@@ -345,16 +521,25 @@ export default function Topbar() {
                           key={child.label}
                           onClick={() => goTo(child.path)}
                           selected={child.path === location.pathname}
-                          sx={{ pl: 5, py: 0.9, color: 'rgba(255,255,255,0.7)', gap: 1.25 }}
+                          sx={{
+                            pl: 4.75,
+                            py: 0.9,
+                            borderRadius: 1.5,
+                            mb: 0.25,
+                            color: INK_DIM,
+                            gap: 1.25,
+                            '&.Mui-selected': { bgcolor: 'rgba(151, 171, 62, 0.1)', color: ACCENT },
+                            '&:hover': { bgcolor: 'rgba(255,255,255,0.04)' },
+                          }}
                         >
                           {child.icon && (
                             <ListItemIcon sx={{ minWidth: 0, color: 'inherit' }}>
-                              <child.icon sx={{ fontSize: 17 }} />
+                              <child.icon sx={{ fontSize: 16 }} />
                             </ListItemIcon>
                           )}
                           <ListItemText
                             primary={child.label}
-                            slotProps={{ primary: { sx: { fontSize: 13.5 } } }}
+                            slotProps={{ primary: { sx: { fontFamily: FONT_STACK, fontSize: 13 } } }}
                           />
                         </ListItemButton>
                       ))}
