@@ -8,7 +8,7 @@ export default function Header({ }) {
     
     const navigate = useNavigate();
     const handleCreate = () => {
-        navigate("/master/contacts/create");
+        navigate("/master/client/create");
     }
   
   return (
@@ -29,7 +29,7 @@ export default function Header({ }) {
             fontSize: 18,
           }}
         >
-          Contact Lists
+          Clients
         </Typography>
       </Box>
 
@@ -47,7 +47,7 @@ export default function Header({ }) {
           py: 0.5,
         }}
       >
-        Create Contact List
+        Create Client
       </Button>
 
     </Box>

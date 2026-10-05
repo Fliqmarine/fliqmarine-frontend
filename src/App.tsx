@@ -12,8 +12,8 @@ import Vendor from './pages/vendor/Index';
 import GlCodeParent from './pages/glParent/Index';
 import GlCodeChild from './pages/glChild/Index';
 import GlCodeSubChild from './pages/glSubChild/Index';
-import ContactList from './pages/contact/Index';
-import ContactCreate from './pages/contact/Create';
+import ClientList from './pages/client/Index';
+import ClientCreate from './pages/client/Create';
 import Layout from './components/Layout';
 
 function App() {
@@ -34,12 +34,12 @@ function App() {
           <Route path="/master/airport-codes" element={<AirportCode />} />
           <Route path="/master/banks" element={<Bank />} />
           <Route path="/master/cargos" element={<Cargo />} />
-          <Route path="/master/contacts" element={<ContactList />} />
-          <Route path="/master/contacts/create" element={<ContactCreate />} />
           <Route path="/master/vendors" element={<Vendor />} />
           <Route path="/master/gl_code_parents" element={<GlCodeParent />} />
           <Route path="/master/gl_code_children" element={<GlCodeChild />} />
           <Route path="/master/gl_code_sub_children" element={<GlCodeSubChild />} />
+          <Route path="/master/clients" element={<ClientList />} />
+          <Route path="/master/clients/create" element={<ClientCreate />} />
         </Route>
       </Routes>
     </BrowserRouter>
