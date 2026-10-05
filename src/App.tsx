@@ -13,7 +13,9 @@ import GlCodeParent from './pages/glParent/Index';
 import GlCodeChild from './pages/glChild/Index';
 import GlCodeSubChild from './pages/glSubChild/Index';
 import ClientList from './pages/client/Index';
+import VesselList from './pages/vessel/Index';
 import ClientCreate from './pages/client/Create';
+import VesselCreate from './pages/vessel/Create';
 import Layout from './components/Layout';
 
 function App() {
@@ -40,6 +42,8 @@ function App() {
           <Route path="/master/gl_code_sub_children" element={<GlCodeSubChild />} />
           <Route path="/master/clients" element={<ClientList />} />
           <Route path="/master/clients/create" element={<ClientCreate />} />
+          <Route path="/master/vessels/create" element={<VesselCreate />} />
+          <Route path="/master/vessels" element={<VesselList />} />
         </Route>
       </Routes>
     </BrowserRouter>
