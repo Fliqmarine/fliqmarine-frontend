@@ -12,10 +12,12 @@ import Vendor from './pages/vendor/Index';
 import GlCodeParent from './pages/glParent/Index';
 import GlCodeChild from './pages/glChild/Index';
 import GlCodeSubChild from './pages/glSubChild/Index';
+import HubList from './pages/hub/Index';
 import ClientList from './pages/client/Index';
 import VesselList from './pages/vessel/Index';
 import ClientCreate from './pages/client/Create';
 import VesselCreate from './pages/vessel/Create';
+import HubCreate from './pages/hub/Create';
 import Layout from './components/Layout';
 
 function App() {
@@ -44,6 +46,8 @@ function App() {
           <Route path="/master/clients/create" element={<ClientCreate />} />
           <Route path="/master/vessels/create" element={<VesselCreate />} />
           <Route path="/master/vessels" element={<VesselList />} />
+          <Route path="/master/hubs" element={<HubList />} />
+          <Route path="/master/hubs/create" element={<HubCreate />} />
         </Route>
       </Routes>
     </BrowserRouter>
