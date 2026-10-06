@@ -20,6 +20,8 @@ import VesselCreate from './pages/vessel/Create';
 import HubCreate from './pages/hub/Create';
 import ContactListCreate from './pages/contactList/Create';
 import ContactList from './pages/contactList/Index';
+import StockList from './pages/stock/StockList';
+import StockCreate from './pages/stock/Create';
 import Layout from './components/Layout';
 
 function App() {
@@ -52,6 +54,8 @@ function App() {
           <Route path="/master/hubs/create" element={<HubCreate />} />
           <Route path="/master/contact-lists" element={<ContactList />} />
           <Route path="/master/contact-lists/create" element={<ContactListCreate />} />
+          <Route path="/stocks/stock-list" element={<StockList />} />
+          <Route path="/stocks/create" element={<StockCreate />} />
         </Route>
       </Routes>
     </BrowserRouter>
