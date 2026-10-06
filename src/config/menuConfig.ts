@@ -4,7 +4,7 @@ import LocalShippingIcon from '@mui/icons-material/LocalShipping';
 import NotificationsActiveIcon from '@mui/icons-material/NotificationsActive';
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import PeopleIcon from '@mui/icons-material/People';
-import DirectionsBoatIcon from '@mui/icons-material/DirectionsBoat';
+import CreateIcon from '@mui/icons-material/Create';
 import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
 import GroupsIcon from '@mui/icons-material/Groups';
 import LocalAirportIcon from '@mui/icons-material/LocalAirport';
@@ -18,6 +18,8 @@ import Looks4Icon from '@mui/icons-material/Looks4';
 import ImportContactsSharpIcon from '@mui/icons-material/ImportContactsSharp';
 import AddAlarmIcon from '@mui/icons-material/AddAlarm';
 import type { SvgIconComponent } from '@mui/icons-material';
+import CircleNotificationsIcon from '@mui/icons-material/CircleNotifications';
+import AddToQueueIcon from '@mui/icons-material/AddToQueue';
 
 export interface MenuItem {
   label: string;
@@ -28,10 +30,27 @@ export interface MenuItem {
 }
 
 export const menuConfig: MenuItem[] = [
+  // {
+  //   label: 'Dashboard',
+  //   path: '/dashboard',
+  //   // icon: DashboardIcon,
+  // },
+ 
   {
-    label: 'Dashboard',
-    path: '/dashboard',
-    // icon: DashboardIcon,
+    label: 'Enquiry',
+    // icon: LocalShippingIcon,
+    children: [
+      { label: 'Enquiry Create', path: '/Enquiry/Create' , icon: CreateIcon},
+      { label: 'Enquiry Followup', path: '/Enquiry/list' , icon: CircleNotificationsIcon},
+      { label: 'Adhoc Enquiry', path: '/Enquiry/Create' , icon: AddToQueueIcon},
+    ],
+  },
+  {
+    label: 'Quotation',
+    // icon: LocalShippingIcon,
+    children: [
+      { label: 'Quotation List', path: '/quotation/list' , icon: LocalShippingIcon},
+    ],
   },
   {
     label: 'Stocks',
@@ -51,7 +70,7 @@ export const menuConfig: MenuItem[] = [
     ],
   },
   {
-    label: 'Prealerts',
+    label: 'Fliq Jobs',
     // icon: NotificationsActiveIcon,
     children: [
       { label: 'All Stages', path: '/prealerts/all-stages' , icon: NotificationsActiveIcon},
@@ -90,7 +109,7 @@ export const menuConfig: MenuItem[] = [
     // icon: Inventory2Icon,
     children: [
       { label: 'Hub', path: '/master/hubs' , icon: LocalShippingIcon},
-      { label: 'Contact Lists', path: '/master/contacts' , icon: GroupsIcon},
+      { label: 'Contact Lists', path: '/master/contact-lists' , icon: GroupsIcon},
       { label: 'Client', path: '/master/clients' , icon: AttachMoneyIcon},
       { label: 'Vessel', path: '/master/vessels' , icon: AttachMoneyIcon},
       { label: 'Hub Locations', path: '/master/hub-locations' , icon: AttachMoneyIcon},

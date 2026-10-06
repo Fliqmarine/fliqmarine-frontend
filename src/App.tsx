@@ -18,6 +18,8 @@ import VesselList from './pages/vessel/Index';
 import ClientCreate from './pages/client/Create';
 import VesselCreate from './pages/vessel/Create';
 import HubCreate from './pages/hub/Create';
+import ContactListCreate from './pages/contactList/Create';
+import ContactList from './pages/contactList/Index';
 import Layout from './components/Layout';
 
 function App() {
@@ -48,6 +50,8 @@ function App() {
           <Route path="/master/vessels" element={<VesselList />} />
           <Route path="/master/hubs" element={<HubList />} />
           <Route path="/master/hubs/create" element={<HubCreate />} />
+          <Route path="/master/contact-lists" element={<ContactList />} />
+          <Route path="/master/contact-lists/create" element={<ContactListCreate />} />
         </Route>
       </Routes>
     </BrowserRouter>
