@@ -27,6 +27,8 @@ import {
 import { alpha, useTheme } from '@mui/material/styles';
 import type { Theme } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
+import EmailIcon from '@mui/icons-material/Email';
+import ImportContactsIcon from '@mui/icons-material/ImportContacts';
 import DeleteIcon from '@mui/icons-material/Delete';
 import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
 import ImageIcon from '@mui/icons-material/Image';
@@ -517,6 +519,22 @@ export default function StockListTable({
                 </TableCell>
 
                 <TableCell align="right" sx={{ ...cellSx, ...stickyRight, px: 1 }}>
+                  <IconButton
+                    size="small"
+                    aria-label="Audit Logs"
+                    // onClick={() => handleEdit(stockList)}
+                    sx={actionBtnSx('primary')}
+                  >
+                    <ImportContactsIcon sx={{ fontSize: 17 }} />
+                  </IconButton>
+                  <IconButton
+                    size="small"
+                    aria-label="Mail"
+                    // onClick={() => handleEdit(stockList)}
+                    sx={actionBtnSx('info')}
+                  >
+                    <EmailIcon sx={{ fontSize: 17 }} />
+                  </IconButton>
                   <IconButton
                     size="small"
                     aria-label="Edit"
