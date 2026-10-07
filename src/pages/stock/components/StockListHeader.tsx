@@ -47,7 +47,7 @@ export default function Header({ }) {
           py: 0.5,
         }}
       >
-        Create Stock List
+        Create Stock
       </Button>
 
     </Box>

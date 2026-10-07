@@ -1,29 +1,35 @@
-import { DescriptionOutlined, PictureAsPdfOutlined } from '@mui/icons-material';
+import { DescriptionOutlined, PictureAsPdfOutlined, ContentCopy, CloudDownload } from '@mui/icons-material';
 import { Box, Button, Typography } from '@mui/material';
 import { useState } from 'react';
 import Header from './components/StockListHeader';
 import Filter from './components/StockListFilter';
 import StockListTable, { type StockList } from './components/StockListTable';
 
-const stockLists: StockList[] = [
-  {  id: 1, station: 'PVG-HUB',stock_no: 'PVG00021',stock_status: 'Stock',arrival_date: '25-06-2026',client: 'V.Ships Offshore (Asia) Pte Ltd',vessel: 'AM PASSION',supplier: 'BORPO MARINE',po: '6245-00149 / 6245-00149',pieces: '3',weight: '150',cbm: '0.250',cargo_value: '5000',transit_no: '5000',manifest: '5000',status: 'Active'},
-  {  id: 2, station: 'PVG-HUB',stock_no: 'PVG00021',stock_status: 'Hold',arrival_date: '25-06-2026',client: 'V.Ships Offshore (Asia) Pte Ltd',vessel: 'AM PASSION',supplier: 'BORPO MARINE',po: '6245-00149 / 6245-00149',pieces: '3',weight: '150',cbm: '0.250',cargo_value: '5000',transit_no: '5000',manifest: '5000',status: 'Active'},
-  {  id: 3, station: 'PVG-HUB',stock_no: 'PVG00021',stock_status: 'Pending',arrival_date: '25-06-2026',client: 'V.Ships Offshore (Asia) Pte Ltd',vessel: 'AM PASSION',supplier: 'BORPO MARINE',po: '6245-00149 / 6245-00149',pieces: '3',weight: '150',cbm: '0.250',cargo_value: '5000',transit_no: '5000',manifest: '5000',status: 'Active'},
-  {  id: 4, station: 'PVG-HUB',stock_no: 'PVG00021',stock_status: 'New',arrival_date: '25-06-2026',client: 'V.Ships Offshore (Asia) Pte Ltd',vessel: 'AM PASSION',supplier: 'BORPO MARINE',po: '6245-00149 / 6245-00149',pieces: '3',weight: '150',cbm: '0.250',cargo_value: '5000',transit_no: '5000',manifest: '5000',status: 'Active'},
-  {  id: 5, station: 'PVG-HUB',stock_no: 'PVG00021',stock_status: 'In Process',arrival_date: '25-06-2026',client: 'V.Ships Offshore (Asia) Pte Ltd',vessel: 'AM PASSION',supplier: 'BORPO MARINE',po: '6245-00149 / 6245-00149',pieces: '3',weight: '150',cbm: '0.250',cargo_value: '5000',transit_no: '5000',manifest: '5000',status: 'Active'},
-  {  id: 6, station: 'PVG-HUB',stock_no: 'PVG00021',stock_status: 'Stock',arrival_date: '25-06-2026',client: 'V.Ships Offshore (Asia) Pte Ltd',vessel: 'AM PASSION',supplier: 'BORPO MARINE',po: '6245-00149 / 6245-00149',pieces: '3',weight: '150',cbm: '0.250',cargo_value: '5000',transit_no: '5000',manifest: '5000',status: 'Active'},
-  {  id: 7, station: 'PVG-HUB',stock_no: 'PVG00021',stock_status: 'Stock',arrival_date: '25-06-2026',client: 'V.Ships Offshore (Asia) Pte Ltd',vessel: 'AM PASSION',supplier: 'BORPO MARINE',po: '6245-00149 / 6245-00149',pieces: '3',weight: '150',cbm: '0.250',cargo_value: '5000',transit_no: '5000',manifest: '5000',status: 'Active'},
-  {  id: 8, station: 'PVG-HUB',stock_no: 'PVG00021',stock_status: 'Stock',arrival_date: '25-06-2026',client: 'V.Ships Offshore (Asia) Pte Ltd',vessel: 'AM PASSION',supplier: 'BORPO MARINE',po: '6245-00149 / 6245-00149',pieces: '3',weight: '150',cbm: '0.250',cargo_value: '5000',transit_no: '5000',manifest: '5000',status: 'Active'},
-  {  id: 9, station: 'PVG-HUB',stock_no: 'PVG00021',stock_status: 'Stock',arrival_date: '25-06-2026',client: 'V.Ships Offshore (Asia) Pte Ltd',vessel: 'AM PASSION',supplier: 'BORPO MARINE',po: '6245-00149 / 6245-00149',pieces: '3',weight: '150',cbm: '0.250',cargo_value: '5000',transit_no: '5000',manifest: '5000',status: 'Active'},
-  {  id: 10, station: 'PVG-HUB',stock_no: 'PVG00021',stock_status: 'Stock',arrival_date: '25-06-2026',client: 'V.Ships Offshore (Asia) Pte Ltd',vessel: 'AM PASSION',supplier: 'BORPO MARINE',po: '6245-00149 / 6245-00149',pieces: '3',weight: '150',cbm: '0.250',cargo_value: '5000',transit_no: '5000',manifest: '5000',status: 'Active'},
-  {  id: 11, station: 'PVG-HUB',stock_no: 'PVG00021',stock_status: 'Stock',arrival_date: '25-06-2026',client: 'V.Ships Offshore (Asia) Pte Ltd',vessel: 'AM PASSION',supplier: 'BORPO MARINE',po: '6245-00149 / 6245-00149',pieces: '3',weight: '150',cbm: '0.250',cargo_value: '5000',transit_no: '5000',manifest: '5000',status: 'Active'},
-  {  id: 12, station: 'PVG-HUB',stock_no: 'PVG00021',stock_status: 'Stock',arrival_date: '25-06-2026',client: 'V.Ships Offshore (Asia) Pte Ltd',vessel: 'AM PASSION',supplier: 'BORPO MARINE',po: '6245-00149 / 6245-00149',pieces: '3',weight: '150',cbm: '0.250',cargo_value: '5000',transit_no: '5000',manifest: '5000',status: 'Active'},
-  {  id: 13, station: 'PVG-HUB',stock_no: 'PVG00021',stock_status: 'Stock',arrival_date: '25-06-2026',client: 'V.Ships Offshore (Asia) Pte Ltd',vessel: 'AM PASSION',supplier: 'BORPO MARINE',po: '6245-00149 / 6245-00149',pieces: '3',weight: '150',cbm: '0.250',cargo_value: '5000',transit_no: '5000',manifest: '5000',status: 'Active'},
-  {  id: 14, station: 'PVG-HUB',stock_no: 'PVG00021',stock_status: 'Stock',arrival_date: '25-06-2026',client: 'V.Ships Offshore (Asia) Pte Ltd',vessel: 'AM PASSION',supplier: 'BORPO MARINE',po: '6245-00149 / 6245-00149',pieces: '3',weight: '150',cbm: '0.250',cargo_value: '5000',transit_no: '5000',manifest: '5000',status: 'Active'},
-  {  id: 15, station: 'PVG-HUB',stock_no: 'PVG00021',stock_status: 'Stock',arrival_date: '25-06-2026',client: 'V.Ships Offshore (Asia) Pte Ltd',vessel: 'AM PASSION',supplier: 'BORPO MARINE',po: '6245-00149 / 6245-00149',pieces: '3',weight: '150',cbm: '0.250',cargo_value: '5000',transit_no: '5000',manifest: '5000',status: 'Active'},
-  {  id: 16, station: 'PVG-HUB',stock_no: 'PVG00021',stock_status: 'Stock',arrival_date: '25-06-2026',client: 'V.Ships Offshore (Asia) Pte Ltd',vessel: 'AM PASSION',supplier: 'BORPO MARINE',po: '6245-00149 / 6245-00149',pieces: '3',weight: '150',cbm: '0.250',cargo_value: '5000',transit_no: '5000',manifest: '5000',status: 'Active'},
-  {  id: 17, station: 'PVG-HUB',stock_no: 'PVG00021',stock_status: 'Stock',arrival_date: '25-06-2026',client: 'V.Ships Offshore (Asia) Pte Ltd',vessel: 'AM PASSION',supplier: 'BORPO MARINE',po: '6245-00149 / 6245-00149',pieces: '3',weight: '150',cbm: '0.250',cargo_value: '5000',transit_no: '5000',manifest: '5000',status: 'Active'},
-];
+const stockStatuses = ['Stock', 'Hold', 'Pending', 'New', 'In Process'];
+
+const stockLists: StockList[] = Array.from({ length: 17 }, (_, i) => {
+  const id = i + 1;
+  // First 5 rows cycle through each status; the rest are 'Stock' (same as original data)
+  const stock_status = id <= 5 ? stockStatuses[i] : 'Stock';
+  return {
+    id,
+    station: 'PVG-HUB',
+    stock_no: 'PVG00021',
+    stock_status,
+    arrival_date: '25-06-2026',
+    client: 'V.Ships Offshore (Asia) Pte Ltd',
+    vessel: 'AM PASSION',
+    supplier: 'BORPO MARINE',
+    po: '6245-00149 / 6245-00149',
+    pieces: '3',
+    weight: '150',
+    cbm: '0.250',
+    cargo_value: '5000',
+    transit_no: '5000',
+    manifest: '5000',
+    status: 'Active',
+  };
+});
 
 export default function Index() {
   const [page, setPage] = useState(0);
@@ -75,6 +81,18 @@ export default function Index() {
     }
   };
 
+  const handleCreateManifest = () => {
+    console.log('Create Manifest', selected);
+  };
+
+  const handleDownload = () => {
+    console.log('Download', selected);
+  };
+
+  const handleCopy = () => {
+    console.log('Copy', selected);
+  };
+
   const handleExportExcel = () => {
     console.log('Export to Excel', selected);
   };
@@ -108,8 +126,10 @@ export default function Index() {
         <Box
           sx={{
             display: 'flex',
-            alignItems: 'center',
+            flexDirection: { xs: 'column', md: 'row' },
+            alignItems: { xs: 'stretch', md: 'center' },
             justifyContent: 'space-between',
+            gap: { xs: 1, md: 2 },
             mb: 1,
             px: 1.5,
             py: 0.75,
@@ -119,11 +139,59 @@ export default function Index() {
             bgcolor: 'action.hover',
           }}
         >
-          <Typography variant="body2" sx={{ fontSize: 13, fontWeight: 600 }}>
-            {selected.length} selected
-          </Typography>
+          {/* Left: selected count + Create Manifest */}
+          <Box
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: { xs: 'space-between', md: 'flex-start' },
+              gap: 1.5,
+            }}
+          >
+            <Typography
+              variant="body2"
+              sx={{ fontSize: 13, fontWeight: 600, whiteSpace: 'nowrap' }}
+            >
+              {selected.length} selected
+            </Typography>
 
-          <Box sx={{ display: 'flex', gap: 1 }}>
+            <Button
+              size="small"
+              variant="contained"
+              startIcon={<DescriptionOutlined sx={{ fontSize: 16 }} />}
+              onClick={handleCreateManifest}
+              sx={{ textTransform: 'none', fontSize: 12, fontWeight: 600 }}
+            >
+              Create Manifest
+            </Button>
+          </Box>
+
+          {/* Right: export actions (2x2 grid on mobile, single row on larger screens) */}
+          <Box
+            sx={{
+              display: { xs: 'grid', sm: 'flex' },
+              gridTemplateColumns: { xs: 'repeat(2, 1fr)' },
+              gap: 1,
+            }}
+          >
+            <Button
+              size="small"
+              variant="contained"
+              startIcon={<CloudDownload sx={{ fontSize: 16 }} />}
+              onClick={handleDownload}
+              sx={{ textTransform: 'none', fontSize: 12, fontWeight: 500 }}
+            >
+              Download
+            </Button>
+            <Button
+              size="small"
+              variant="contained"
+              startIcon={<ContentCopy sx={{ fontSize: 16 }} />}
+              onClick={handleCopy}
+              sx={{ textTransform: 'none', fontSize: 12, fontWeight: 500 }}
+            >
+              Copy
+            </Button>
             <Button
               size="small"
               variant="contained"
@@ -131,9 +199,8 @@ export default function Index() {
               onClick={handleExportExcel}
               sx={{ textTransform: 'none', fontSize: 12, fontWeight: 600 }}
             >
-              Export Excel
+              Excel
             </Button>
-
             <Button
               size="small"
               variant="contained"
@@ -141,7 +208,7 @@ export default function Index() {
               onClick={handleExportPdf}
               sx={{ textTransform: 'none', fontSize: 12, fontWeight: 600 }}
             >
-              Export PDF
+              PDF
             </Button>
           </Box>
         </Box>

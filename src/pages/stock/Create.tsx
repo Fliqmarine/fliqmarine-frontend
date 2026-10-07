@@ -998,7 +998,7 @@ export default function CreateStockForm({ onSave, onCancel, navHeight = 76 }: Cr
           <Box
             sx={{
               display: 'grid',
-              gap: 1.25,
+              gap: 1.2,
               gridTemplateColumns: { xs: 'minmax(0, 1fr)', sm: 'repeat(2, minmax(0, 1fr))' },
             }}
           >
