@@ -22,6 +22,7 @@ import ContactListCreate from './pages/contactList/Create';
 import ContactList from './pages/contactList/Index';
 import StockList from './pages/stock/StockList';
 import StockFollowUp from './pages/stock/StockFollowUp';
+import StockHistory from './pages/stock/StockHistory';
 import StockCreate from './pages/stock/Create';
 import Layout from './components/Layout';
 
@@ -58,6 +59,7 @@ function App() {
           <Route path="/stocks/stock-list" element={<StockList />} />
           <Route path="/stocks/create" element={<StockCreate />} />
           <Route path="/stocks/followup" element={<StockFollowUp />} />
+          <Route path="/stocks/history" element={<StockHistory />} />
         </Route>
       </Routes>
     </BrowserRouter>

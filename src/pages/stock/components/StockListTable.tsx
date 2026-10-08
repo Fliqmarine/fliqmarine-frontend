@@ -29,11 +29,14 @@ import type { Theme } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import EmailIcon from '@mui/icons-material/Email';
 import ImportContactsIcon from '@mui/icons-material/ImportContacts';
+import VisibilityIcon from '@mui/icons-material/Visibility';
 import DeleteIcon from '@mui/icons-material/Delete';
 import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
 import ImageIcon from '@mui/icons-material/Image';
 import { useState } from 'react';
 import type { ReactNode } from 'react';
+import ViewModal from '../../../components/view-modal/ViewModal';
+import StockView from '../View';
 
 /* ------------------------------- Types ------------------------------- */
 
@@ -434,6 +437,9 @@ export default function StockListTable({
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [selectedStockList, setSelectedStockList] = useState<StockList | null>(null);
 
+  // View modal (static for now; later store the selected row and pass its id to StockView)
+  const [viewOpen, setViewOpen] = useState(false);
+
   const handleEdit = (stockList: StockList) => {
     setSelectedStockList(stockList);
     setDrawerOpen(true);
@@ -519,33 +525,53 @@ export default function StockListTable({
                 </TableCell>
 
                 <TableCell align="right" sx={{ ...cellSx, ...stickyRight, px: 1 }}>
-                  <IconButton
-                    size="small"
-                    aria-label="Audit Logs"
-                    // onClick={() => handleEdit(stockList)}
-                    sx={actionBtnSx('primary')}
-                  >
-                    <ImportContactsIcon sx={{ fontSize: 17 }} />
-                  </IconButton>
-                  <IconButton
-                    size="small"
-                    aria-label="Mail"
-                    // onClick={() => handleEdit(stockList)}
-                    sx={actionBtnSx('info')}
-                  >
-                    <EmailIcon sx={{ fontSize: 17 }} />
-                  </IconButton>
-                  <IconButton
-                    size="small"
-                    aria-label="Edit"
-                    onClick={() => handleEdit(stockList)}
-                    sx={actionBtnSx('primary')}
-                  >
-                    <EditIcon sx={{ fontSize: 17 }} />
-                  </IconButton>
-                  <IconButton size="small" aria-label="Delete" sx={actionBtnSx('error')}>
-                    <DeleteIcon sx={{ fontSize: 17 }} />
-                  </IconButton>
+                  <Tooltip title="Audit Logs" placement="top">
+                    <IconButton
+                      size="small"
+                      aria-label="Audit Logs"
+                      sx={actionBtnSx('warning')}
+                    >
+                      <ImportContactsIcon sx={{ fontSize: 17 }} />
+                    </IconButton>
+                  </Tooltip>
+
+                  <Tooltip title="Send Mail" placement="top">
+                    <IconButton
+                      size="small"
+                      aria-label="Mail"
+                      sx={actionBtnSx('info')}
+                    >
+                      <EmailIcon sx={{ fontSize: 17 }} />
+                    </IconButton>
+                  </Tooltip>
+
+                  <Tooltip title="Edit" placement="top">
+                    <IconButton
+                      size="small"
+                      aria-label="Edit"
+                      onClick={() => handleEdit(stockList)}
+                      sx={actionBtnSx('primary')}
+                    >
+                      <EditIcon sx={{ fontSize: 17 }} />
+                    </IconButton>
+                  </Tooltip>
+
+                  <Tooltip title="View" placement="top">
+                    <IconButton
+                      size="small"
+                      aria-label="View"
+                      onClick={() => setViewOpen(true)}
+                      sx={actionBtnSx('info')}
+                    >
+                      <VisibilityIcon sx={{ fontSize: 17 }} />
+                    </IconButton>
+                  </Tooltip>
+
+                  <Tooltip title="Delete" placement="top">
+                    <IconButton size="small" aria-label="Delete" sx={actionBtnSx('error')}>
+                      <DeleteIcon sx={{ fontSize: 17 }} />
+                    </IconButton>
+                  </Tooltip>
                 </TableCell>
               </TableRow>
             );
@@ -653,6 +679,14 @@ export default function StockListTable({
                 <Box>
                   <IconButton
                     size="small"
+                    aria-label="View"
+                    onClick={() => setViewOpen(true)}
+                    sx={actionBtnSx('info')}
+                  >
+                    <VisibilityIcon sx={{ fontSize: 17 }} />
+                  </IconButton>
+                  <IconButton
+                    size="small"
                     aria-label="Edit"
                     onClick={() => handleEdit(stockList)}
                     sx={actionBtnSx('primary')}
@@ -715,6 +749,10 @@ export default function StockListTable({
           '.MuiTablePagination-select': { fontSize: 12 },
         }}
       />
+
+      <ViewModal open={viewOpen} title="Stock" onClose={() => setViewOpen(false)}>
+        <StockView />
+      </ViewModal>
     </Paper>
   );
 }

@@ -2,15 +2,8 @@ import {
   Avatar,
   Badge,
   Box,
-  Button,
   Checkbox,
   Chip,
-  CircularProgress,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
   Divider,
   IconButton,
   List,
@@ -36,13 +29,14 @@ import type { Theme } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import EmailIcon from '@mui/icons-material/Email';
 import ImportContactsIcon from '@mui/icons-material/ImportContacts';
+import VisibilityIcon from '@mui/icons-material/Visibility';
 import DeleteIcon from '@mui/icons-material/Delete';
 import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
 import ImageIcon from '@mui/icons-material/Image';
-import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import { useState } from 'react';
 import type { ReactNode } from 'react';
-
+import ViewModal from '../../../components/view-modal/ViewModal';
+import StockView from '../View';
 
 /* ------------------------------- Types ------------------------------- */
 
@@ -53,7 +47,7 @@ export type StockFile = {
   type: 'pdf' | 'image';
 };
 
-export type StockFollowUp = {
+export type StockHistory = {
   id: number;
   station: string;
   stock_no: string;
@@ -73,9 +67,9 @@ export type StockFollowUp = {
   files?: StockFile[]; // when missing, the static sample files below are shown
 };
 
-type StockFollowUpTableProps = {
-  stockFollowUps: StockFollowUp[];
-  paginatedStockFollowUps: StockFollowUp[];
+type StockHistoryTableProps = {
+  stockHistorys: StockHistory[];
+  paginatedStockHistorys: StockHistory[];
   page: number;
   rowsPerPage: number;
   selected: number[];
@@ -83,7 +77,6 @@ type StockFollowUpTableProps = {
   onChangeRowsPerPage: (event: React.ChangeEvent<HTMLInputElement>) => void;
   onSelectRow: (id: number) => void;
   onSelectAllOnPage: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  onApprove?: (stockFollowUp: StockFollowUp) => void | Promise<void>;
 };
 
 type Tone = 'primary' | 'success' | 'warning' | 'info' | 'error';
@@ -91,7 +84,7 @@ type Tone = 'primary' | 'success' | 'warning' | 'info' | 'error';
 /* ------------------------- Column configuration ------------------------- */
 
 type Column = {
-  key: Exclude<keyof StockFollowUp, 'id' | 'status' | 'files'>;
+  key: Exclude<keyof StockHistory, 'id' | 'status' | 'files'>;
   label: string;
   numeric?: boolean;
 };
@@ -201,7 +194,7 @@ const stickyRight = {
   boxShadow: (t: Theme) => `-6px 0 8px -6px ${alpha(t.palette.common.black, 0.2)}`,
 } as const;
 
-// Small tinted square buttons (edit = primary, delete = error, approve = success)
+// Small tinted square buttons (edit = primary, delete = error)
 const actionBtnSx = (tone: Tone) =>
   ({
     p: 0.5,
@@ -211,21 +204,6 @@ const actionBtnSx = (tone: Tone) =>
     bgcolor: (t: Theme) => alpha(t.palette[tone].main, 0.1),
     '&:hover': { bgcolor: (t: Theme) => alpha(t.palette[tone].main, 0.22) },
   }) as const;
-
-// Approve button: icon + label
-const approveBtnSx = {
-  fontSize: 11.5,
-  fontWeight: 600,
-  lineHeight: 1.4,
-  py: 0.25,
-  px: 1,
-  ml: 0.5,
-  minWidth: 0,
-  textTransform: 'none',
-  whiteSpace: 'nowrap',
-  borderRadius: 1,
-  '& .MuiButton-startIcon': { mr: 0.5, ml: 0 },
-} as const;
 
 /* ---------------------- Multiple values in one cell (PO) ---------------------- */
 
@@ -271,7 +249,7 @@ function MultiValue({ value, max = 2 }: { value: string; max?: number }) {
 
 /* ---------------------- Cell content (colours per column) ---------------------- */
 
-function renderValue(col: Column, s: StockFollowUp, maxPo = 2): ReactNode {
+function renderValue(col: Column, s: StockHistory, maxPo = 2): ReactNode {
   const value = s[col.key];
 
   switch (col.key) {
@@ -432,78 +410,11 @@ function StockFiles({ files }: { files?: StockFile[] }) {
   );
 }
 
-/* ---------------------------- Approve confirmation ---------------------------- */
-
-function ApproveDialog({
-  stock,
-  loading,
-  onClose,
-  onConfirm,
-}: {
-  stock: StockFollowUp | null;
-  loading: boolean;
-  onClose: () => void;
-  onConfirm: () => void;
-}) {
-  const theme = useTheme();
-  const isXs = useMediaQuery(theme.breakpoints.down('sm'));
-
-  return (
-    <Dialog
-      open={Boolean(stock)}
-      onClose={loading ? undefined : onClose}
-      fullWidth
-      maxWidth="xs"
-      PaperProps={{ sx: { m: 2, width: 'calc(100% - 32px)', borderRadius: 2 } }}
-    >
-      <DialogTitle sx={{ display: 'flex', alignItems: 'center', gap: 1, fontSize: 16, fontWeight: 700 }}>
-        <CheckCircleIcon color="success" />
-        Approve stock
-      </DialogTitle>
-
-      <DialogContent>
-        <DialogContentText sx={{ fontSize: 13.5 }}>
-          Are you sure you want to approve stock{' '}
-          <Box component="span" sx={{ fontWeight: 700, color: 'primary.main' }}>
-            {stock?.stock_no}
-          </Box>
-          {stock?.client ? ` for ${stock.client}` : ''}?
-        </DialogContentText>
-      </DialogContent>
-
-      <DialogActions
-        sx={{
-          px: 3,
-          pb: 2,
-          gap: 1,
-          flexDirection: isXs ? 'column-reverse' : 'row',
-          // MUI adds a left margin between buttons; remove it when stacked
-          '& > :not(style) ~ :not(style)': { ml: isXs ? 0 : 1 },
-        }}
-      >
-        <Button onClick={onClose} disabled={loading} fullWidth={isXs} color="inherit">
-          Cancel
-        </Button>
-        <Button
-          onClick={onConfirm}
-          disabled={loading}
-          fullWidth={isXs}
-          variant="contained"
-          color="success"
-          startIcon={loading ? <CircularProgress size={16} color="inherit" /> : <CheckCircleIcon />}
-        >
-          {loading ? 'Approving…' : 'Approve'}
-        </Button>
-      </DialogActions>
-    </Dialog>
-  );
-}
-
 /* ------------------------------ Component ------------------------------ */
 
-export default function StockFollowUpTable({
-  stockFollowUps,
-  paginatedStockFollowUps,
+export default function StockHistoryTable({
+  stockHistorys,
+  paginatedStockHistorys,
   page,
   rowsPerPage,
   selected,
@@ -511,49 +422,37 @@ export default function StockFollowUpTable({
   onChangeRowsPerPage,
   onSelectRow,
   onSelectAllOnPage,
-  onApprove,
-}: StockFollowUpTableProps) {
+}: StockHistoryTableProps) {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
   const isSelected = (id: number) => selected.includes(id);
 
-  const pageSelectedCount = paginatedStockFollowUps.filter((s) => isSelected(s.id)).length;
+  const pageSelectedCount = paginatedStockHistorys.filter((s) => isSelected(s.id)).length;
   const allOnPageSelected =
-    paginatedStockFollowUps.length > 0 && pageSelectedCount === paginatedStockFollowUps.length;
+    paginatedStockHistorys.length > 0 && pageSelectedCount === paginatedStockHistorys.length;
   const someOnPageSelected =
-    pageSelectedCount > 0 && pageSelectedCount < paginatedStockFollowUps.length;
+    pageSelectedCount > 0 && pageSelectedCount < paginatedStockHistorys.length;
 
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const [selectedStockFollowUp, setSelectedStockFollowUp] = useState<StockFollowUp | null>(null);
+  const [selectedStockHistory, setSelectedStockHistory] = useState<StockHistory | null>(null);
 
-  const [approveTarget, setApproveTarget] = useState<StockFollowUp | null>(null);
-  const [approving, setApproving] = useState(false);
+  // View modal (static for now; later store the selected row and pass its id to StockView)
+  const [viewOpen, setViewOpen] = useState(false);
 
-  const handleEdit = (stockFollowUp: StockFollowUp) => {
-    setSelectedStockFollowUp(stockFollowUp);
+  const handleEdit = (stockHistory: StockHistory) => {
+    setSelectedStockHistory(stockHistory);
     setDrawerOpen(true);
   };
 
   // keep these if your drawer component uses them
   const handleClose = () => {
     setDrawerOpen(false);
-    setSelectedStockFollowUp(null);
+    setSelectedStockHistory(null);
   };
   void drawerOpen;
-  void selectedStockFollowUp;
+  void selectedStockHistory;
   void handleClose;
-
-  const handleApproveConfirm = async () => {
-    if (!approveTarget) return;
-    try {
-      setApproving(true);
-      await onApprove?.(approveTarget);
-      setApproveTarget(null);
-    } finally {
-      setApproving(false);
-    }
-  };
 
   /* ---------------------------- Desktop / tablet ---------------------------- */
   const renderTable = () => (
@@ -567,7 +466,7 @@ export default function StockFollowUpTable({
         '&::-webkit-scrollbar-thumb': { bgcolor: 'divider', borderRadius: 4 },
       }}
     >
-      <Table size="small" aria-label="Stock Followup" sx={{ minWidth: 1500 }}>
+      <Table size="small" aria-label="Stock list" sx={{ minWidth: 1400 }}>
         <TableHead>
           <TableRow>
             <TableCell padding="checkbox" sx={{ ...headCellSx, ...stickyLeft, px: 1 }}>
@@ -596,12 +495,12 @@ export default function StockFollowUpTable({
         </TableHead>
 
         <TableBody>
-          {paginatedStockFollowUps.map((stockFollowUp) => {
-            const checked = isSelected(stockFollowUp.id);
+          {paginatedStockHistorys.map((stockHistory) => {
+            const checked = isSelected(stockHistory.id);
 
             return (
               <TableRow
-                key={stockFollowUp.id}
+                key={stockHistory.id}
                 hover
                 selected={checked}
                 sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
@@ -610,49 +509,43 @@ export default function StockFollowUpTable({
                   <Checkbox
                     size="small"
                     checked={checked}
-                    onChange={() => onSelectRow(stockFollowUp.id)}
+                    onChange={() => onSelectRow(stockHistory.id)}
                     sx={{ p: 0.5 }}
                   />
                 </TableCell>
 
                 {columns.map((col) => (
                   <TableCell key={col.key} sx={{ ...cellSx, ...(col.numeric ? numericSx : {}) }}>
-                    {renderValue(col, stockFollowUp)}
+                    {renderValue(col, stockHistory)}
                   </TableCell>
                 ))}
 
                 <TableCell align="center" sx={cellSx}>
-                  <StockFiles files={stockFollowUp.files} />
+                  <StockFiles files={stockHistory.files} />
                 </TableCell>
 
                 <TableCell align="right" sx={{ ...cellSx, ...stickyRight, px: 1 }}>
-                  <Button
-                    size="small"
-                    variant="outlined"
-                    color="success"
-                    startIcon={<CheckCircleIcon sx={{ fontSize: 16 }} />}
-                    onClick={() => setApproveTarget(stockFollowUp)}
-                    sx={approveBtnSx}
-                  >
-                    Approve
-                  </Button>
+                  <Tooltip title="Audit Logs" placement="top">
+                    <IconButton
+                      size="small"
+                      aria-label="Audit Logs"
+                      sx={actionBtnSx('warning')}
+                    >
+                      <ImportContactsIcon sx={{ fontSize: 17 }} />
+                    </IconButton>
+                  </Tooltip>
 
-                  <IconButton size="small" aria-label="Audit Logs" sx={actionBtnSx('primary')}>
-                    <ImportContactsIcon sx={{ fontSize: 17 }} />
-                  </IconButton>
+                  <Tooltip title="View" placement="top">
+                    <IconButton
+                      size="small"
+                      aria-label="View"
+                      onClick={() => setViewOpen(true)}
+                      sx={actionBtnSx('info')}
+                    >
+                      <VisibilityIcon sx={{ fontSize: 17 }} />
+                    </IconButton>
+                  </Tooltip>
 
-                  <IconButton size="small" aria-label="Mail" sx={actionBtnSx('info')}>
-                    <EmailIcon sx={{ fontSize: 17 }} />
-                  </IconButton>
-
-                  <IconButton
-                    size="small"
-                    aria-label="Edit"
-                    onClick={() => handleEdit(stockFollowUp)}
-                    sx={actionBtnSx('primary')}
-                  >
-                    <EditIcon sx={{ fontSize: 17 }} />
-                  </IconButton>
                 </TableCell>
               </TableRow>
             );
@@ -690,13 +583,13 @@ export default function StockFollowUpTable({
       </Stack>
 
       <Stack spacing={1.25} sx={{ p: 1.25 }}>
-        {paginatedStockFollowUps.map((stockFollowUp) => {
-          const checked = isSelected(stockFollowUp.id);
-          const tone = getStatusTone(stockFollowUp.stock_status);
+        {paginatedStockHistorys.map((stockHistory) => {
+          const checked = isSelected(stockHistory.id);
+          const tone = getStatusTone(stockHistory.stock_status);
 
           return (
             <Paper
-              key={stockFollowUp.id}
+              key={stockHistory.id}
               variant="outlined"
               sx={{
                 borderRadius: 2,
@@ -713,18 +606,18 @@ export default function StockFollowUpTable({
                 <Checkbox
                   size="small"
                   checked={checked}
-                  onChange={() => onSelectRow(stockFollowUp.id)}
+                  onChange={() => onSelectRow(stockHistory.id)}
                   sx={{ p: 0.5 }}
                 />
                 <Box sx={{ flex: 1, minWidth: 0 }}>
                   <Typography noWrap sx={{ fontSize: 13, fontWeight: 600 }}>
-                    {stockFollowUp.station}
+                    {stockHistory.station}
                   </Typography>
                   <Typography noWrap sx={{ fontSize: 11.5, fontWeight: 600, color: 'primary.main' }}>
-                    {stockFollowUp.stock_no}
+                    {stockHistory.stock_no}
                   </Typography>
                 </Box>
-                <StatusChip status={stockFollowUp.stock_status} />
+                <StatusChip status={stockHistory.stock_status} />
               </Stack>
 
               <Divider sx={{ my: 1.25 }} />
@@ -747,7 +640,7 @@ export default function StockFollowUpTable({
                           fontVariantNumeric: col.numeric ? 'tabular-nums' : undefined,
                         }}
                       >
-                        {renderValue(col, stockFollowUp, 99)}
+                        {renderValue(col, stockHistory, 99)}
                       </Box>
                     </Box>
                   ))}
@@ -756,28 +649,15 @@ export default function StockFollowUpTable({
               <Divider sx={{ my: 1.25 }} />
 
               <Stack direction="row" alignItems="center" justifyContent="space-between">
-                <StockFiles files={stockFollowUp.files} />
-                <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                  <Button
-                    size="small"
-                    variant="outlined"
-                    color="success"
-                    startIcon={<CheckCircleIcon sx={{ fontSize: 16 }} />}
-                    onClick={() => setApproveTarget(stockFollowUp)}
-                    sx={approveBtnSx}
-                  >
-                    Approve
-                  </Button>
+                <StockFiles files={stockHistory.files} />
+                <Box>
                   <IconButton
                     size="small"
-                    aria-label="Edit"
-                    onClick={() => handleEdit(stockFollowUp)}
-                    sx={actionBtnSx('primary')}
+                    aria-label="View"
+                    onClick={() => setViewOpen(true)}
+                    sx={actionBtnSx('info')}
                   >
-                    <EditIcon sx={{ fontSize: 17 }} />
-                  </IconButton>
-                  <IconButton size="small" aria-label="Delete" sx={actionBtnSx('error')}>
-                    <DeleteIcon sx={{ fontSize: 17 }} />
+                    <VisibilityIcon sx={{ fontSize: 17 }} />
                   </IconButton>
                 </Box>
               </Stack>
@@ -807,7 +687,7 @@ export default function StockFollowUpTable({
 
       <TablePagination
         component="div"
-        count={stockFollowUps.length}
+        count={stockHistorys.length}
         page={page}
         onPageChange={onChangePage}
         rowsPerPage={rowsPerPage}
@@ -833,12 +713,9 @@ export default function StockFollowUpTable({
         }}
       />
 
-      <ApproveDialog
-        stock={approveTarget}
-        loading={approving}
-        onClose={() => setApproveTarget(null)}
-        onConfirm={handleApproveConfirm}
-      />
+      <ViewModal open={viewOpen} title="Stock" onClose={() => setViewOpen(false)}>
+        <StockView />
+      </ViewModal>
     </Paper>
   );
 }
