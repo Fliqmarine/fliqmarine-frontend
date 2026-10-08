@@ -21,6 +21,7 @@ import HubCreate from './pages/hub/Create';
 import ContactListCreate from './pages/contactList/Create';
 import ContactList from './pages/contactList/Index';
 import StockList from './pages/stock/StockList';
+import ManifestList from './pages/manifest/Index';
 import StockFollowUp from './pages/stock/StockFollowUp';
 import StockHistory from './pages/stock/StockHistory';
 import StockCreate from './pages/stock/Create';
@@ -60,6 +61,7 @@ function App() {
           <Route path="/stocks/create" element={<StockCreate />} />
           <Route path="/stocks/followup" element={<StockFollowUp />} />
           <Route path="/stocks/history" element={<StockHistory />} />
+          <Route path="/manifest/list" element={<ManifestList />} />
         </Route>
       </Routes>
     </BrowserRouter>

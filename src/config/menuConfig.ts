@@ -20,6 +20,7 @@ import AddAlarmIcon from '@mui/icons-material/AddAlarm';
 import type { SvgIconComponent } from '@mui/icons-material';
 import CircleNotificationsIcon from '@mui/icons-material/CircleNotifications';
 import AddToQueueIcon from '@mui/icons-material/AddToQueue';
+import AddCircleIcon from '@mui/icons-material/AddCircle';
 
 export interface MenuItem {
   label: string;
@@ -67,6 +68,7 @@ export const menuConfig: MenuItem[] = [
     // icon: LocalShippingIcon,
     children: [
       { label: 'Manifest List', path: '/manifest/list' , icon: LocalShippingIcon},
+      { label: 'Manifest Create', path: '/manifest/Create' , icon: AddCircleIcon},
     ],
   },
   {
