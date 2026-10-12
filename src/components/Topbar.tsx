@@ -59,7 +59,13 @@ export default function Topbar() {
   const navigate = useNavigate();
   const location = useLocation();
   const theme = useTheme();
+
+  // Browser zoom shrinks the page width in CSS pixels (e.g. 1366px at 100%
+  // becomes ~1093px at 125%), so the layout reacts to these breakpoints:
+  //   below lg (1200px) -> top nav collapses into the hamburger drawer
+  //   below xl (1536px) -> nav icons, profile name and email are hidden
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+  const isNarrow = useMediaQuery(theme.breakpoints.down('lg'));
 
   const [profileAnchor, setProfileAnchor] = useState<null | HTMLElement>(null);
   const [menuAnchor, setMenuAnchor] = useState<null | HTMLElement>(null);
@@ -72,7 +78,9 @@ export default function Topbar() {
   const closeTimer = useRef<number | null>(null);
 
   const isSidebarMode = LAYOUT_MODE === 'sidebar';
-  const showTopNav = !isSidebarMode && !isMobile;
+  // Top-nav layout switches to the hamburger earlier (at lg) than the sidebar layout (md)
+  const showMenuButton = isMobile || (!isSidebarMode && isNarrow);
+  const showTopNav = !isSidebarMode && !showMenuButton;
 
   function cancelClose() {
     if (closeTimer.current) {
@@ -180,14 +188,15 @@ export default function Topbar() {
         }}
       >
         <Toolbar sx={{ gap: { xs: 1, sm: 1.5 }, px: { xs: 1.5, sm: 3 }, minHeight: { xs: 52, sm: 58 } }}>
-          {/* Hamburger — top-nav layout on mobile, or sidebar layout on mobile */}
-          {isMobile && (
+          {/* Hamburger — shown whenever the top nav does not fit */}
+          {showMenuButton && (
             <IconButton
               edge="start"
               onClick={() => setMobileNavOpen(true)}
               sx={{
                 color: INK_DIM,
                 mr: 0.5,
+                flexShrink: 0,
                 borderRadius: 1.5,
                 '&:hover': { bgcolor: 'rgba(255,255,255,0.06)', color: INK },
               }}
@@ -205,8 +214,9 @@ export default function Topbar() {
                 letterSpacing: '0.06em',
                 fontSize: { xs: 12.5, sm: 13.5 },
                 color: INK,
-                mr: { xs: 1.5, md: 5 },
+                mr: { xs: 1.5, lg: 3, xl: 5 },
                 whiteSpace: 'nowrap',
+                flexShrink: 0,
                 textTransform: 'uppercase',
               }}
             >
@@ -218,12 +228,13 @@ export default function Topbar() {
           )}
 
           {showTopNav && (
-            <Box sx={{ display: 'flex', gap: 0.5, flexGrow: 1 }}>
+            <Box sx={{ display: 'flex', flexWrap: 'nowrap', gap: 0.5, flexGrow: 1, minWidth: 0 }}>
               {menuConfig.map((item) => {
                 const active = isItemActive(item);
                 return (
                   <Box
                     key={item.label}
+                    sx={{ flexShrink: 0 }}
                     onMouseEnter={(e: MouseEvent<HTMLElement>) =>
                       handleMenuOpen(e.currentTarget, item)
                     }
@@ -241,14 +252,17 @@ export default function Topbar() {
                         color: active ? SURFACE : INK_DIM,
                         bgcolor: active ? ACCENT : 'transparent',
                         textTransform: 'none',
+                        whiteSpace: 'nowrap',
                         fontWeight: active ? 700 : 500,
                         fontSize: 13,
                         letterSpacing: '-0.005em',
-                        px: 1.5,
+                        px: { lg: 1.1, xl: 1.5 },
                         py: 0.5,
                         minHeight: 32,
                         borderRadius: 999,
                         transition: 'background-color 160ms ease, color 160ms ease',
+                        // icons only when there is plenty of room
+                        '& .MuiButton-startIcon': { display: { xs: 'none', xl: 'inherit' } },
                         '&:hover': {
                           bgcolor: active ? ACCENT : 'rgba(255,255,255,0.06)',
                           color: active ? SURFACE : INK,
@@ -263,7 +277,7 @@ export default function Topbar() {
             </Box>
           )}
 
-          {(isSidebarMode || isMobile) && (
+          {(isSidebarMode || showMenuButton) && (
             <Typography
               variant="h6"
               sx={{
@@ -273,6 +287,7 @@ export default function Topbar() {
                 fontSize: { xs: 15.5, sm: 17.5 },
                 color: INK,
                 flexGrow: 1,
+                minWidth: 0,
               }}
               noWrap
             >
@@ -330,7 +345,8 @@ export default function Topbar() {
             </Box>
           </Popper>
 
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: { xs: 0.5, sm: 1 } }}>
+          {/* Right side never shrinks or wraps, so it cannot be squeezed at high zoom */}
+          <Box sx={{ display: 'flex', alignItems: 'center', flexShrink: 0, gap: { xs: 0.5, sm: 1 } }}>
             <ThemeToggleButton />
             <Divider
               orientation="vertical"
@@ -366,7 +382,8 @@ export default function Topbar() {
               >
                 {initials}
               </Avatar>
-              <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
+              {/* Name + email only when there is plenty of width (xl and up) */}
+              <Box sx={{ display: { xs: 'none', xl: 'block' }, whiteSpace: 'nowrap' }}>
                 <Typography
                   variant="body2"
                   sx={{
@@ -401,7 +418,8 @@ export default function Topbar() {
               transformOrigin={{ horizontal: 'right', vertical: 'top' }}
               slotProps={{ paper: { sx: { ...menuSlotProps.paper.sx, minWidth: 210 } } }}
             >
-              <Box sx={{ px: 2, py: 1.25, display: { xs: 'block', sm: 'none' } }}>
+              {/* Name + email move into the menu whenever they are hidden in the bar */}
+              <Box sx={{ px: 2, py: 1.25, display: { xs: 'block', xl: 'none' } }}>
                 <Typography sx={{ fontFamily: FONT_STACK, fontWeight: 600, fontSize: 13.5, color: INK }}>
                   {STATIC_USER.name}
                 </Typography>
@@ -409,7 +427,7 @@ export default function Topbar() {
                   {STATIC_USER.email}
                 </Typography>
               </Box>
-              <Divider sx={{ display: { xs: 'block', sm: 'none' }, borderColor: HAIRLINE }} />
+              <Divider sx={{ display: { xs: 'block', xl: 'none' }, borderColor: HAIRLINE }} />
 
               <MuiMenuItem
                 onClick={handleLogout}
@@ -434,10 +452,10 @@ export default function Topbar() {
         </Toolbar>
       </AppBar>
 
-      {/* Mobile navigation drawer — covers both top-nav and sidebar layouts on small screens */}
+      {/* Navigation drawer — used whenever the hamburger is shown */}
       <Drawer
         anchor="left"
-        open={isMobile && mobileNavOpen}
+        open={showMenuButton && mobileNavOpen}
         onClose={() => setMobileNavOpen(false)}
         slotProps={{
           paper: {

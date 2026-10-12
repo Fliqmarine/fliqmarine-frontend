@@ -25,6 +25,7 @@ import ManifestList from './pages/manifest/Index';
 import StockFollowUp from './pages/stock/StockFollowUp';
 import StockHistory from './pages/stock/StockHistory';
 import StockCreate from './pages/stock/Create';
+import ManifestCreate from './pages/manifest/Create';
 import Layout from './components/Layout';
 
 function App() {
@@ -62,6 +63,7 @@ function App() {
           <Route path="/stocks/followup" element={<StockFollowUp />} />
           <Route path="/stocks/history" element={<StockHistory />} />
           <Route path="/manifest/list" element={<ManifestList />} />
+          <Route path="/manifest/Create" element={<ManifestCreate />} />
         </Route>
       </Routes>
     </BrowserRouter>

@@ -8,7 +8,7 @@ export default function Header({ }) {
     
     const navigate = useNavigate();
     const handleCreate = () => {
-        navigate("/master/hubs/create");
+        navigate("/manifest/Create");
     }
   
   return (
