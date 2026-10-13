@@ -39,7 +39,7 @@ const manifests: Manifest[] = Array.from({ length: 17 }, (_, i): Manifest => {
 
 export default function Index() {
   const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [rowsPerPage, setRowsPerPage] = useState(15);
   const [search, setSearch] = useState('');
   const [status, setStatus] = useState('');
   const [selected, setSelected] = useState<number[]>([]);

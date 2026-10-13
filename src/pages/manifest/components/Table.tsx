@@ -40,6 +40,7 @@ import ImageIcon from '@mui/icons-material/Image';
 import { useState } from 'react';
 import type { ReactNode } from 'react';
 import ViewModal from '../../../components/view-modal/ViewModal';
+import { useNavigate } from 'react-router-dom';
 
 /* ------------------------------- Types ------------------------------- */
 
@@ -447,6 +448,11 @@ function RowActions({
 }) {
   const preAlert = isPreAlert(row.manifest_status);
   const empty = (width?: number) => (compact ? null : <Slot width={width} />);
+  
+  const navigate = useNavigate();
+  const handleCreate = () => {
+      navigate("/prealert/create");
+  }
 
   return (
     <>
@@ -508,6 +514,7 @@ function RowActions({
           size="small"
           variant="contained"
           disableElevation
+          onClick= {handleCreate}
           sx={{
             ml: 0.75,
             width: 112,
@@ -554,6 +561,7 @@ export default function ManifestTable({
 
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [selectedManifest, setSelectedManifest] = useState<Manifest | null>(null);
+
 
   // View modal (static for now; later store the selected row and pass its id to ManifestView)
   const [viewOpen, setViewOpen] = useState(false);
