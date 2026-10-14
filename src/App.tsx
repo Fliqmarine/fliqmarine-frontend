@@ -23,6 +23,8 @@ import ContactList from './pages/contactList/Index';
 import StockList from './pages/stock/StockList';
 import ManifestList from './pages/manifest/Index';
 import AllStage from './pages/prealert/AllStage';
+import Stage1 from './pages/prealert/Stage1';
+import Stage2 from './pages/prealert/Stage2';
 import StockFollowUp from './pages/stock/StockFollowUp';
 import StockHistory from './pages/stock/StockHistory';
 import StockCreate from './pages/stock/Create';
@@ -68,6 +70,8 @@ function App() {
           <Route path="/manifest/Create" element={<ManifestCreate />} />
           <Route path="/prealert/create" element={<PreAlertCreate />} />
           <Route path="/prealerts/all-stages" element={<AllStage />} />
+          <Route path="/prealerts/stage-1" element={<Stage1 />} />
+          <Route path="/prealerts/stage-2" element={<Stage2 />} />
         </Route>
       </Routes>
     </BrowserRouter>
