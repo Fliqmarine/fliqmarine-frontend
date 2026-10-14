@@ -336,7 +336,7 @@ function RowActions({ row, onAddPod, onDistance, onMailSent, onCopy }: RowAction
         </IconButton>
       </Tooltip>
       <Tooltip title="Stock Received" placement="top">
-        <IconButton size="small" aria-label="Stock Received" onClick={() => onDistance?.(row)} sx={actionBtnSx('success')}>
+        <IconButton size="small" aria-label="Stock Received" onClick={() => onDistance?.(row)} sx={actionBtnSx('warning')}>
           <MoveToInboxIcon sx={{ fontSize: 17 }} />
         </IconButton>
       </Tooltip> 

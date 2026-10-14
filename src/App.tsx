@@ -25,6 +25,7 @@ import ManifestList from './pages/manifest/Index';
 import AllStage from './pages/prealert/AllStage';
 import Stage1 from './pages/prealert/Stage1';
 import Stage2 from './pages/prealert/Stage2';
+import Stage3 from './pages/prealert/Stage3';
 import StockFollowUp from './pages/stock/StockFollowUp';
 import StockHistory from './pages/stock/StockHistory';
 import StockCreate from './pages/stock/Create';
@@ -72,6 +73,7 @@ function App() {
           <Route path="/prealerts/all-stages" element={<AllStage />} />
           <Route path="/prealerts/stage-1" element={<Stage1 />} />
           <Route path="/prealerts/stage-2" element={<Stage2 />} />
+          <Route path="/prealerts/stage-3" element={<Stage3 />} />
         </Route>
       </Routes>
     </BrowserRouter>
