@@ -2,27 +2,31 @@ import { lazy, Suspense } from 'react';
 import type { ComponentType } from 'react';
 import { Box, CircularProgress } from '@mui/material';
 import ViewModal from './ViewModal';
+import type { ViewModalProps } from './ViewModal';
 
-/* Each view lives in its own feature folder and is loaded only when opened.
-   Every view must `export default` a component that accepts an `id` prop. */
-const StockView = lazy(() => import('@/pages/stock/StockView'));
-// const ManifestView = lazy(() => import('@/pages/manifest/ManifestView'));
-// const PreAlertView = lazy(() => import('@/pages/prealert/PreAlertView'));
-// const InvoiceView  = lazy(() => import('@/pages/invoice/InvoiceView'));
+/* Each view is loaded only when opened. Use relative paths (or configure the "@" alias). */
+const VendorInvoice = lazy(() => import('../../pages/prealert/VendorInvoice'));
+const StockView = lazy(() => import('../../pages/stock/View')); // re-add once the file exists
 
-export type ViewType = 'stock'; // add: | 'manifest' | 'prealert' | 'invoice'
+export type ViewType = 'vendorInvoice'; // add: | 'stock' | 'manifest' ...
 
 export type ViewTarget = {
   type: ViewType;
   id: number | string;
-  label?: string; // shown after the title, e.g. the stock number
+  label?: string; // shown after the title, e.g. the manifest number
+  props?: Record<string, unknown>; // extra props forwarded to the view
 };
 
-const VIEWS: Record<ViewType, { title: string; Component: ComponentType<{ id: number | string }> }> = {
+type ViewEntry = {
+  title: string;
+  maxWidth?: ViewModalProps['maxWidth'];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  Component: ComponentType<any>;
+};
+
+const VIEWS: Record<ViewType, ViewEntry> = {
+  vendorInvoice: { title: 'Move to Stage 4 –', maxWidth: 'sm', Component: VendorInvoice },
   stock: { title: 'Stock', Component: StockView },
-  // manifest: { title: 'Manifest',  Component: ManifestView },
-  // prealert: { title: 'Pre-alert', Component: PreAlertView },
-  // invoice:  { title: 'Invoice',   Component: InvoiceView },
 };
 
 type ViewHostProps = {
@@ -36,7 +40,7 @@ export default function ViewHost({ target, onClose }: ViewHostProps) {
   const title = view ? `${view.title}${target?.label ? ` ${target.label}` : ''}` : '';
 
   return (
-    <ViewModal open={Boolean(target)} title={title} onClose={onClose}>
+    <ViewModal open={Boolean(target)} title={title} onClose={onClose} maxWidth={view?.maxWidth}>
       {view && target && (
         <Suspense
           fallback={
@@ -45,7 +49,7 @@ export default function ViewHost({ target, onClose }: ViewHostProps) {
             </Box>
           }
         >
-          <view.Component id={target.id} />
+          <view.Component id={target.id} onClose={onClose} {...target.props} />
         </Suspense>
       )}
     </ViewModal>

@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import {
   ContentCopy as ContentCopyIcon,
   DescriptionOutlined,
@@ -27,15 +28,12 @@ import { alpha, useTheme } from '@mui/material/styles';
 import type { Theme } from '@mui/material';
 import type { ReactNode } from 'react';
 import CancelIcon from '@mui/icons-material/Cancel';
-import LocalShippingIcon from '@mui/icons-material/LocalShipping';
-import PublishedWithChangesIcon from '@mui/icons-material/PublishedWithChanges';
-import CleaningServicesIcon from '@mui/icons-material/CleaningServices';
-import MoveToInboxIcon from '@mui/icons-material/MoveToInbox';
-import AssignmentReturnedIcon from '@mui/icons-material/AssignmentReturned';
 import MailIcon from '@mui/icons-material/Mail';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import FactCheckIcon from '@mui/icons-material/FactCheck';
-import VerifiedIcon from '@mui/icons-material/Verified';
+
+// Adjust this path to where your view-modal folder lives (it exports ViewModal from index.ts)
+import { ViewModal } from '../../../components/view-modal';
+import VendorInvoice from '../VendorInvoice';
 
 /* ------------------------------- Types ------------------------------- */
 
@@ -76,6 +74,10 @@ type Stage3TableProps = {
   onDistance?: (row: Stage3) => void;
   onMailSent?: (row: Stage3) => void;
   onCopy?: (row: Stage3) => void;
+  onCancelPreAlert?: (row: Stage3) => void;
+  onMail?: (row: Stage3) => void;
+  onClubManifest?: (row: Stage3) => void;
+  onMoveToStage4?: (row: Stage3) => void; // called after the vendor invoice is saved
 };
 
 type Tone = 'primary' | 'success' | 'warning' | 'info' | 'error';
@@ -167,21 +169,16 @@ const actionBtnSx = (tone: Tone) =>
     '&:hover': { bgcolor: (t: Theme) => alpha(t.palette[tone].main, 0.22) },
   }) as const;
 
-// Small tinted text button (Add POD / Distance / Mail Sent)
-const textBtnSx = (tone: Tone) =>
-  ({
-    minWidth: 0,
-    px: 1.25,
-    py: 0.25,
-    ml: 0.5,
-    fontSize: 11.5,
-    fontWeight: 600,
-    textTransform: 'none',
-    borderRadius: 1,
-    color: `${tone}.main`,
-    bgcolor: (t: Theme) => alpha(t.palette[tone].main, 0.1),
-    '&:hover': { bgcolor: (t: Theme) => alpha(t.palette[tone].main, 0.22) },
-  }) as const;
+const wideBtnSx = {
+  ml: 0.75,
+  width: 112,
+  py: 0.25,
+  fontSize: 11.5,
+  fontWeight: 600,
+  textTransform: 'none',
+  borderRadius: 1,
+  verticalAlign: 'middle',
+} as const;
 
 /* ---------------------- Vessels (several values in one cell) ---------------------- */
 
@@ -257,7 +254,8 @@ type Column = {
   render: (r: Stage3, maxVessel?: number) => ReactNode;
 };
 
-const text = (v: string | number | null | undefined) => (v === null || v === undefined || v === '' ? '—' : v);
+const text = (v: string | number | null | undefined) =>
+  v === null || v === undefined || v === '' ? '—' : v;
 
 const columns: Column[] = [
   { key: 'stage', label: 'Stage', render: (r) => <ToneChip label={r.stage} tone={stageTone(r.stage)} /> },
@@ -310,39 +308,71 @@ const CARD_HEADER_KEYS = ['vessels', 'ref_no', 'stage'];
 
 type RowActionsProps = {
   row: Stage3;
-  onAddPod?: (row: Stage3) => void;
-  onDistance?: (row: Stage3) => void;
   onMailSent?: (row: Stage3) => void;
-  onCopy?: (row: Stage3TableProps) => void;
+  onClubManifest?: (row: Stage3) => void;
+  onCancelPreAlert?: (row: Stage3) => void;
+  onMail?: (row: Stage3) => void;
+  onOpenStage4?: (row: Stage3) => void;
 };
 
-function RowActions({ row, onAddPod, onDistance, onMailSent, onCopy }: RowActionsProps) {
+function RowActions({
+  row,
+  onMailSent,
+  onClubManifest,
+  onCancelPreAlert,
+  onMail,
+  onOpenStage4,
+}: RowActionsProps) {
   return (
     <>
-      <Button size="small" variant="contained" disableElevation
-        sx={{ ml: 0.75, width: 112, py: 0.25, fontSize: 11.5, fontWeight: 600, textTransform: 'none', borderRadius: 1, verticalAlign: 'middle', }}>
+      <Button
+        size="small"
+        variant="contained"
+        disableElevation
+        onClick={() => onMailSent?.(row)}
+        sx={wideBtnSx}
+      >
         Mail Sent
       </Button>
-      <Button size="small" variant="contained" disableElevation
-        sx={{ ml: 0.75, width: 112, py: 0.25, fontSize: 11.5, fontWeight: 600, textTransform: 'none', borderRadius: 1, verticalAlign: 'middle',}}
+      <Button
+        size="small"
+        variant="contained"
+        disableElevation
+        onClick={() => onClubManifest?.(row)}
+        sx={wideBtnSx}
       >
         Club Manifest
       </Button>
       <Tooltip title="Cancel Pre Alert" placement="top">
-        <IconButton size="small" aria-label="Cancel" onClick={() => onCopy?.(row)} sx={actionBtnSx('error')}>
+        <IconButton
+          size="small"
+          aria-label="Cancel Pre Alert"
+          onClick={() => onCancelPreAlert?.(row)}
+          sx={actionBtnSx('error')}
+        >
           <CancelIcon sx={{ fontSize: 17 }} />
         </IconButton>
       </Tooltip>
       <Tooltip title="Mail" placement="top">
-        <IconButton size="small" aria-label="Cancel" onClick={() => onCopy?.(row)} sx={actionBtnSx('info')}>
+        <IconButton
+          size="small"
+          aria-label="Mail"
+          onClick={() => onMail?.(row)}
+          sx={actionBtnSx('info')}
+        >
           <MailIcon sx={{ fontSize: 17 }} />
         </IconButton>
       </Tooltip>
       <Tooltip title="Move to Stage 4" placement="top">
-        <IconButton size="small" aria-label="Move to Stage 4" onClick={() => onDistance?.(row)} sx={actionBtnSx('success')}>
+        <IconButton
+          size="small"
+          aria-label="Move to Stage 4"
+          onClick={() => onOpenStage4?.(row)}
+          sx={actionBtnSx('success')}
+        >
           <CheckCircleIcon sx={{ fontSize: 17 }} />
         </IconButton>
-      </Tooltip> 
+      </Tooltip>
     </>
   );
 }
@@ -360,13 +390,17 @@ export default function Stage3Table({
   onChangeRowsPerPage,
   onSelectRow,
   onSelectAllOnPage,
-  onAddPod,
-  onDistance,
   onMailSent,
-  onCopy,
+  onClubManifest,
+  onCancelPreAlert,
+  onMail,
+  onMoveToStage4,
 }: Stage3TableProps) {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+
+  // Row currently being moved to Stage 4 (null = popup closed)
+  const [stage4Row, setStage4Row] = useState<Stage3 | null>(null);
 
   const total = totalCount ?? rows.length;
 
@@ -375,7 +409,13 @@ export default function Stage3Table({
   const allOnPageSelected = paginatedRows.length > 0 && pageSelectedCount === paginatedRows.length;
   const someOnPageSelected = pageSelectedCount > 0 && pageSelectedCount < paginatedRows.length;
 
-  const actionProps = { onAddPod, onDistance, onMailSent, onCopy };
+  const actionProps = {
+    onMailSent,
+    onClubManifest,
+    onCancelPreAlert,
+    onMail,
+    onOpenStage4: (row: Stage3) => setStage4Row(row),
+  };
 
   /* ---------------------------- Desktop / tablet ---------------------------- */
   const renderTable = () => (
@@ -620,6 +660,24 @@ export default function Stage3Table({
           '.MuiTablePagination-select': { fontSize: 12 },
         }}
       />
+
+      {/* Move to Stage 4 popup */}
+      <ViewModal
+        open={Boolean(stage4Row)}
+        onClose={() => setStage4Row(null)}
+        title={`Move to Stage 4 – ${stage4Row?.ref_no ?? ''}`}
+      >
+        {stage4Row && (
+          <VendorInvoice
+            row={stage4Row}
+            onCancel={() => setStage4Row(null)}
+            onSuccess={() => {
+              onMoveToStage4?.(stage4Row);
+              setStage4Row(null);
+            }}
+          />
+        )}
+      </ViewModal>
     </Paper>
   );
 }
